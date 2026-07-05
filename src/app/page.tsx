@@ -1,6 +1,29 @@
+"use client";
+
 import Link from 'next/link';
 
 export default function LandingPage() {
+  
+  // The magic function that handles mobile sharing or desktop copying
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Al-Rahbiyyah Pro',
+      text: 'The Final Word in Islamic Inheritance & Estate Planning. Calculate Shariah shares 100% free.',
+      url: 'https://alrahbiyyah.com',
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log('Share canceled');
+      }
+    } else {
+      navigator.clipboard.writeText(shareData.url);
+      alert('Link copied to clipboard! You can now paste and share it anywhere.');
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#060b19] text-slate-300 relative overflow-x-hidden selection:bg-yellow-500/30 selection:text-yellow-200">
       
@@ -31,6 +54,15 @@ export default function LandingPage() {
             >
               Calculate Inheritance Shares Now — 100% Free
             </Link>
+            
+            {/* ACTIVATED HERO SHARE BUTTON */}
+            <button 
+              onClick={handleShare}
+              className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-300 bg-slate-800/50 rounded-full hover:bg-slate-700/50 hover:text-white transition-all duration-300 border border-slate-700 backdrop-blur-sm cursor-pointer"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+              Share Platform
+            </button>
           </div>
         </div>
       </section>
@@ -146,7 +178,12 @@ export default function LandingPage() {
             <Link href="/calculator" className="px-8 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">
               Start Free Core
             </Link>
-            <button className="px-8 py-3 flex items-center bg-yellow-600/10 text-yellow-500 font-semibold rounded-lg hover:bg-yellow-600/20 transition-colors border border-yellow-600/30">
+            
+            {/* ACTIVATED FOOTER SHARE BUTTON */}
+            <button 
+              onClick={handleShare}
+              className="px-8 py-3 flex items-center bg-yellow-600/10 text-yellow-500 font-semibold rounded-lg hover:bg-yellow-600/20 transition-colors border border-yellow-600/30 cursor-pointer"
+            >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
               Share Platform
             </button>
