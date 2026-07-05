@@ -20,11 +20,14 @@ export default function AlRahbiyyahDashboard() {
     wasiyyah: ''
   });
 
-  // 3. UI States (Currency, Madhab, Results)
+  // 3. UI States
   const [currency, setCurrency] = useState('₦');
   const [madhab, setMadhab] = useState('shafii'); 
-  const [results, setResults] = useState<any>(null); // Holds the final Shariah calculation
+  const [results, setResults] = useState<any>(null); 
   const [isCalculating, setIsCalculating] = useState(false);
+  
+  // NEW: State to track which rows in the results table are expanded
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
   // 4. Shariah Sequencer Math
   const gross = parseFloat(finances.grossEstate) || 0;
@@ -42,7 +45,8 @@ export default function AlRahbiyyahDashboard() {
   const handleFinanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFinances(prev => ({ ...prev, [name]: value }));
-    setResults(null); // Clear results if they change the money
+    setResults(null);
+    setExpandedRows([]); // Reset expansions
   };
 
   const updateHeir = (heirName: string, delta: number) => {
@@ -50,31 +54,53 @@ export default function AlRahbiyyahDashboard() {
       ...prev,
       [heirName]: Math.max(0, (prev[heirName as keyof typeof heirs] || 0) + delta)
     }));
-    setResults(null); // Clear results if they change the heirs
+    setResults(null);
+    setExpandedRows([]); // Reset expansions
+  };
+
+  const toggleRow = (idx: number) => {
+    setExpandedRows(prev => 
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
   };
 
   // THE EXECUTION TRIGGER
   const handleCalculate = () => {
     setIsCalculating(true);
+    setExpandedRows([]);
     
-    // Simulate a brief calculation delay for a premium software feel
     setTimeout(() => {
-      // --- INTEGRATION POINT ---
-      // Replace the dummy array below with your actual engine call:
-      // const finalShares = calculateUltimateRahbiyyah(heirs, madhab, netEstate);
-      // setResults(finalShares);
-      
-      // Temporary Dummy Data to showcase the UI
+      // --- DUMMY DATA WITH PROOFS FOR UI TESTING ---
       setResults([
-        { name: 'Husband', fraction: '1/4', percentage: 25, amount: netEstate * 0.25, rule: 'Presence of inheriting descendants.' },
-        { name: 'Son', fraction: '3/4', percentage: 75, amount: netEstate * 0.75, rule: 'Takes the remainder as Asabah.' }
+        { 
+          name: 'Husband', 
+          fraction: '1/4', 
+          percentage: 25, 
+          amount: netEstate * 0.25, 
+          rule: 'Presence of inheriting descendants.',
+          proof: {
+            arabic: "فَإِن كَانَ لَهُنَّ وَلَدٌ فَلَكُمُ الرُّبُعُ مِمَّا تَرَكْنَ",
+            translation: "But if they have a child, you get one-fourth of what they leave...",
+            reference: "Surah An-Nisa [4:12]"
+          }
+        },
+        { 
+          name: 'Son', 
+          fraction: '3/4', 
+          percentage: 75, 
+          amount: netEstate * 0.75, 
+          rule: 'Takes the remainder as Asabah.',
+          proof: {
+            arabic: "يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ",
+            translation: "Allah commands you regarding your children: for the male, what is equal to the share of two females...",
+            reference: "Surah An-Nisa [4:11] (Asabah)"
+          }
+        }
       ]);
-      
       setIsCalculating(false);
     }, 600);
   };
 
-  // Helper component for Heir Counter Buttons
   const HeirCounter = ({ name, label, max = 99 }: { name: string, label: string, max?: number }) => (
     <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors">
       <span className="text-slate-300 font-medium">{label}</span>
@@ -172,7 +198,7 @@ export default function AlRahbiyyahDashboard() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[ { id: 'shafii', name: "Shafi'i", text: "Matn Al-Rahbiyyah" }, { id: 'hanafi', name: "Hanafi", text: "Al-Sirajiyyah" }, { id: 'maliki', name: "Maliki", text: "Al-Jaybiyyah" }, { id: 'hanbali', name: "Hanbali", text: "Nazm al-Mufradat" } ].map((m) => (
-            <button key={m.id} onClick={() => { setMadhab(m.id); setResults(null); }} className={`p-4 rounded-xl border text-left transition-all duration-300 ${madhab === m.id ? 'bg-yellow-600/10 border-yellow-500 shadow-[0_0_15px_rgba(202,138,4,0.15)]' : 'bg-slate-950 border-slate-800 hover:border-slate-600'}`}>
+            <button key={m.id} onClick={() => { setMadhab(m.id); setResults(null); setExpandedRows([]); }} className={`p-4 rounded-xl border text-left transition-all duration-300 ${madhab === m.id ? 'bg-yellow-600/10 border-yellow-500 shadow-[0_0_15px_rgba(202,138,4,0.15)]' : 'bg-slate-950 border-slate-800 hover:border-slate-600'}`}>
               <div className={`font-bold text-lg ${madhab === m.id ? 'text-yellow-400' : 'text-white'}`}>{m.name}</div>
               <div className="text-xs text-slate-500 mt-1">{m.text}</div>
             </button>
@@ -252,13 +278,9 @@ export default function AlRahbiyyahDashboard() {
                 <span className="text-xs text-slate-500 uppercase tracking-widest block mb-1">Total Tarikah Distributed</span>
                 <span className="text-2xl font-bold text-emerald-400">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
-              
-              {/* --- THE 100% CIRCULAR PROGRESS RING --- */}
               <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0 bg-slate-900 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.2)] border border-slate-700/50">
                 <svg className="w-full h-full transform -rotate-90 p-1" viewBox="0 0 36 36">
-                  {/* Background Track */}
                   <path className="text-slate-800" strokeWidth="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  {/* Glowing Emerald Progress Ring */}
                   <path className="text-emerald-500" strokeWidth="2.5" strokeDasharray="100, 100" strokeDashoffset="0" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" style={{ transition: "stroke-dashoffset 1.5s ease-in-out" }} />
                 </svg>
                 <div className="absolute flex flex-col items-center justify-center mt-0.5">
@@ -269,31 +291,77 @@ export default function AlRahbiyyahDashboard() {
             </div>
           </div>
 
-          <div className="p-6 md:p-8">
+          <div className="p-0 md:p-4">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-500 text-sm uppercase tracking-wider">
-                    <th className="pb-4 font-semibold">Surviving Heir</th>
-                    <th className="pb-4 font-semibold">Quranic Fraction</th>
-                    <th className="pb-4 font-semibold">Percentage</th>
-                    <th className="pb-4 font-semibold text-right">Monetary Payout</th>
+                  <tr className="text-slate-500 text-xs uppercase tracking-widest bg-slate-900/50 border-b border-slate-800">
+                    <th className="p-4 font-semibold rounded-tl-lg">Surviving Heir</th>
+                    <th className="p-4 font-semibold">Fraction</th>
+                    <th className="p-4 font-semibold">Percentage</th>
+                    <th className="p-4 font-semibold text-right">Monetary Payout</th>
+                    <th className="p-4 font-semibold text-center rounded-tr-lg">Proof</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
-                  {results.map((heir: any, idx: number) => (
-                    <tr key={idx} className="hover:bg-slate-900/50 transition-colors group">
-                      <td className="py-5">
-                        <span className="font-bold text-white text-lg block">{heir.name}</span>
-                        <span className="text-xs text-slate-500">{heir.rule}</span>
-                      </td>
-                      <td className="py-5 font-mono text-yellow-500 text-xl">{heir.fraction}</td>
-                      <td className="py-5 text-slate-300 font-semibold">{heir.percentage}%</td>
-                      <td className="py-5 text-right font-bold text-emerald-400 text-xl">
-                        {currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  ))}
+                  {results.map((heir: any, idx: number) => {
+                    const isExpanded = expandedRows.includes(idx);
+                    return (
+                      <React.Fragment key={idx}>
+                        {/* MAIN ROW */}
+                        <tr 
+                          onClick={() => toggleRow(idx)} 
+                          className={`hover:bg-slate-800/30 transition-colors cursor-pointer group ${isExpanded ? 'bg-slate-800/20' : ''}`}
+                        >
+                          <td className="p-4">
+                            <span className="font-bold text-white text-lg block">{heir.name}</span>
+                            <span className="text-xs text-slate-500">{heir.rule}</span>
+                          </td>
+                          <td className="p-4 font-mono text-yellow-500 text-xl">{heir.fraction}</td>
+                          <td className="p-4 text-slate-300 font-semibold">{heir.percentage}%</td>
+                          <td className="p-4 text-right font-bold text-emerald-400 text-xl">
+                            {currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-4 text-center">
+                            <button className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto transition-all ${isExpanded ? 'bg-yellow-600 text-black rotate-180' : 'bg-slate-800 text-yellow-500 group-hover:bg-slate-700'}`}>
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                          </td>
+                        </tr>
+                        
+                        {/* EXPANDABLE VERSE-TO-VARIABLE PROOF ROW */}
+                        {isExpanded && (
+                          <tr className="bg-[#030610]">
+                            <td colSpan={5} className="p-0">
+                              <div className="p-6 border-l-2 border-yellow-600 bg-gradient-to-r from-yellow-900/10 to-transparent m-4 rounded-r-xl shadow-inner animate-in slide-in-from-top-2 duration-300">
+                                
+                                <div className="flex items-center gap-2 mb-4">
+                                  <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                  <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Shariah Textual Proof</span>
+                                </div>
+                                
+                                <div className="text-right mb-4">
+                                  <p className="text-2xl md:text-3xl text-yellow-400 font-bold leading-relaxed" dir="rtl">
+                                    "{heir.proof.arabic}"
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <p className="text-slate-300 italic text-lg border-l-2 border-slate-700 pl-4 py-1">
+                                    {heir.proof.translation}
+                                  </p>
+                                  <div className="mt-4 inline-block px-3 py-1 bg-slate-800 text-yellow-500 text-xs font-semibold rounded-md border border-slate-700">
+                                    Ref: {heir.proof.reference}
+                                  </div>
+                                </div>
+                                
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
