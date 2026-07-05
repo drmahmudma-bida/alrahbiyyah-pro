@@ -17,11 +17,11 @@ export default function LandingPage() {
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-700 drop-shadow-lg">
             The Final Word in <br className="hidden md:block" />
-            Shariah Estate Planning.
+            Islamic Inheritance <span className="text-3xl md:text-5xl text-yellow-600/80">& Estate Planning</span>.
           </h1>
 
           <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-10 leading-relaxed">
-            The world's first smart inheritance ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
+            The world's first smart Fara'id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full justify-center">
@@ -29,7 +29,7 @@ export default function LandingPage() {
               href="/calculator"
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-emerald-600 rounded-full shadow-[0_0_30px_rgba(5,150,105,0.4)] hover:bg-emerald-500 hover:shadow-[0_0_40px_rgba(5,150,105,0.6)] transition-all duration-300 border border-emerald-400/50"
             >
-              Calculate Your Estate Now — 100% Free
+              Calculate Inheritance Shares Now — 100% Free
             </Link>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function LandingPage() {
             <div className="bg-[#060b19] border border-slate-700 rounded-2xl p-10 text-center flex flex-col items-center">
               <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-6 text-2xl">👨‍👩‍👧‍👦</div>
               <h3 className="text-2xl font-bold text-white mb-4">For the Public</h3>
-              <p className="text-slate-400 mb-8">Protect Your Family. Generate a bulletproof, Shariah-compliant Islamic Will (Wasiyyah) recognized by local probate courts in minutes.</p>
+              <p className="text-slate-400 mb-8">Protect Your Family. Generate a bulletproof, Shariah-compliant Islamic Will (Wasiyyah) and direct inheritance breakdown in minutes.</p>
               <Link href="/calculator" className="mt-auto px-6 py-3 border border-emerald-500 text-emerald-400 rounded-full hover:bg-emerald-900/30 transition-colors w-full font-semibold">Start Family Plan</Link>
             </div>
             
