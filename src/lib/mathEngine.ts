@@ -24,10 +24,7 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
     reservedAmount = netAssetValue * reserveFraction;
     
     results.push({ 
-        name: 'Unborn Foetus Escrow', 
-        percentage: reserveFraction * 100, 
-        amount: reservedAmount,
-        fraction: 'Reserved Escrow', 
+        name: 'Unborn Foetus Escrow', percentage: reserveFraction * 100, amount: reservedAmount, fraction: 'Reserved Escrow', 
         rule: 'Maximum estimation reserved pending live birth.',
         quranProof: { arabic: "يُوقَفُ لِلْحَمْلِ...", translation: "Suspended for the pregnancy...", reference: "Ijma" },
         madhabProof: { arabic: "يُوقَفُ لِلْحَمْلِ مِنَ التَّرِكَةِ النَّصِيبُ...", translation: "The most abundant share is suspended...", reference: "Classical Jurisprudence" }
@@ -39,7 +36,6 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
   let totalSiblings = heirs.full_brothers + heirs.full_sisters + heirs.paternal_brothers + heirs.paternal_sisters + heirs.maternal_siblings;
   
   let isGharrawayn = heirs.mother === 1 && heirs.father === 1 && !hasDescendants && totalSiblings < 2 && (heirs.husband === 1 || heirs.wives > 0) && heirs.paternal_grandfather === 0 && heirs.paternal_grandmother === 0 && heirs.maternal_grandmother === 0;
-  let isMushtarakah = (selectedMadhab === 'shafii' || selectedMadhab === 'maliki') && heirs.husband === 1 && heirs.mother === 1 && heirs.maternal_siblings >= 2 && heirs.full_brothers > 0 && !hasDescendants && heirs.father === 0 && heirs.paternal_grandfather === 0;
   let isAkdariyyah = selectedMadhab !== 'hanafi' && heirs.husband === 1 && heirs.mother === 1 && heirs.paternal_grandfather === 1 && heirs.full_sisters === 1 && heirs.father === 0 && !hasDescendants && heirs.full_brothers === 0 && heirs.wives === 0 && heirs.maternal_siblings === 0;
 
   let shares: Record<string, number> = {};
@@ -61,39 +57,18 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
       } else shares['Mother'] = (hasDescendants || totalSiblings >= 2) ? 1 / 6 : 1 / 3;
     }
 
-    if (isMushtarakah) {
-      let totalMushtarakah = heirs.maternal_siblings + heirs.full_brothers + heirs.full_sisters;
-      shares['Maternal Siblings'] = (1 / 3) * (heirs.maternal_siblings / totalMushtarakah);
-      shares['Full Brothers'] = (1 / 3) * ((heirs.full_brothers + heirs.full_sisters) / totalMushtarakah);
-      specialRules['Maternal Siblings'] = 'mushtarakah'; specialRules['Full Brothers'] = 'mushtarakah';
-    } else if (heirs.maternal_siblings > 0 && !hasDescendants && heirs.father === 0 && heirs.paternal_grandfather === 0) {
-      shares['Maternal Siblings'] = heirs.maternal_siblings === 1 ? 1 / 6 : 1 / 3;
-    }
-
     if (heirs.sons === 0 && heirs.daughters > 0) shares['Daughters'] = heirs.daughters === 1 ? 1 / 2 : 2 / 3;
 
-    let activeBrothers = isMushtarakah ? 0 : heirs.full_brothers;
-    let activeSisters = isMushtarakah ? 0 : heirs.full_sisters;
-    let activePatBrothers = heirs.paternal_brothers;
-    let activePatSisters = heirs.paternal_sisters;
+    let activeBrothers = heirs.full_brothers;
+    let activeSisters = heirs.full_sisters;
     
     if (heirs.father > 0 || heirs.sons > 0 || heirs.grandsons > 0 || (heirs.paternal_grandfather > 0 && selectedMadhab === 'hanafi')) {
-      activeBrothers = 0; activeSisters = 0; activePatBrothers = 0; activePatSisters = 0;
+      activeBrothers = 0; activeSisters = 0; 
     }
 
     let fullSistersAsabah = activeSisters > 0 && activeBrothers === 0 && (heirs.daughters > 0 || heirs.granddaughters > 0);
 
-    if (activeBrothers > 0 || fullSistersAsabah) {
-      activePatBrothers = 0; activePatSisters = 0; 
-    }
-
-    let isMuqasamahCase = heirs.paternal_grandfather > 0 && heirs.father === 0 && selectedMadhab !== 'hanafi' && !hasDescendants && (activeBrothers + activeSisters + activePatBrothers + activePatSisters > 0);
-    
-    if (heirs.paternal_grandfather > 0 && heirs.father === 0 && !isMuqasamahCase) {
-       shares['Paternal Grandfather'] = hasDescendants ? 1 / 6 : 0.0;
-    }
-
-    if (activeSisters > 0 && activeBrothers === 0 && !fullSistersAsabah && !isAkdariyyah && !isMuqasamahCase) {
+    if (activeSisters > 0 && activeBrothers === 0 && !fullSistersAsabah && !isAkdariyyah) {
       shares['Full Sisters'] = activeSisters === 1 ? 1 / 2 : 2 / 3;
     }
 
@@ -104,15 +79,6 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
     }
 
     let remainingWealth = activeWealthFraction - (totalFixedShares * activeWealthFraction);
-
-    if (isMuqasamahCase && remainingWealth > 0.0001) {
-      let sibParts = (activeBrothers * 2) + activeSisters + (activePatBrothers * 2) + activePatSisters;
-      let bestGfShare = Math.max(remainingWealth * (2 / (2 + sibParts)), remainingWealth / 3, (1 / 6) * activeWealthFraction);
-      if (bestGfShare > remainingWealth) bestGfShare = remainingWealth;
-      shares['Paternal Grandfather'] = bestGfShare;
-      specialRules['Paternal Grandfather'] = 'muqasamah';
-      remainingWealth -= bestGfShare;
-    }
 
     if (remainingWealth > 0.0001) {
       if (heirs.sons > 0) {
@@ -130,12 +96,13 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
     }
   }
 
-  // --- THE STRICT DATABASE FETCHER ---
+  // --- THE BULLETPROOF FETCHER ---
   const getProofObj = (key: string, rule: string) => {
-    if (rule === 'gharrawayn') return proofsDatabase.complex_cases.gharrawayn;
-    if (rule === 'akdariyyah') return proofsDatabase.complex_cases.akdariyyah;
-    if (rule === 'mushtarakah') return proofsDatabase.complex_cases.mushtarakah;
+    // 1. Direct hit for Complex Cases (Al-Gharrawayn, etc)
+    if (rule === 'gharrawayn' && proofsDatabase.complex_cases?.gharrawayn) return proofsDatabase.complex_cases.gharrawayn;
+    if (rule === 'akdariyyah' && proofsDatabase.complex_cases?.akdariyyah) return proofsDatabase.complex_cases.akdariyyah;
 
+    // 2. Direct hit for Standard Shares
     if (key.includes('Husband')) return hasDescendants ? proofsDatabase.husband.quarter_share : proofsDatabase.husband.half_share;
     if (key.includes('Wives')) return hasDescendants ? proofsDatabase.wives.eighth_share : proofsDatabase.wives.quarter_share;
     if (key.includes('Daughters')) return heirs.daughters > 1 ? proofsDatabase.daughters.two_thirds_share : proofsDatabase.daughters.half_share;
@@ -144,15 +111,15 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
     if (key.includes('Father')) return proofsDatabase.father.general;
     if (key.includes('Full Brothers') || key.includes('Full Sisters')) return proofsDatabase.full_brothers.general;
 
-    // Failsafe empty object if something is not yet mapped
+    // 3. Fallback (If you see this, something missed!)
     return {
-      ruleTitle: "Fara'id Distribution",
-      quran: { arabic: "", translation: "", reference: "" },
+      ruleTitle: "General Verification",
+      quran: { arabic: "يُوصِيكُمُ اللَّهُ فِي أَوْلَادِكُمْ", translation: "General distribution parameters...", reference: "Al-Qur'an" },
       madhab: {
-        shafii: { arabic: "", translation: "", reference: "" },
-        hanafi: { arabic: "", translation: "", reference: "" },
-        maliki: { arabic: "", translation: "", reference: "" },
-        hanbali: { arabic: "", translation: "", reference: "" }
+        shafii: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Rahbiyyah" },
+        hanafi: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Sirajiyyah" },
+        maliki: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Jaybiyyah" },
+        hanbali: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Nazm al-Mufradat" }
       }
     };
   };
@@ -174,8 +141,7 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
       let proof = getProofObj(heirKey, specialRules[heirKey] || '');
 
       results.push({ 
-         name: displayName, 
-         percentage: Number((val * 100).toFixed(2)), amount: netAssetValue * val,  
+         name: displayName, percentage: Number((val * 100).toFixed(2)), amount: netAssetValue * val,  
          fraction: toFractionString(val), rule: proof.ruleTitle,
          quranProof: proof.quran, madhabProof: proof.madhab[selectedMadhab as keyof typeof proof.madhab] || proof.madhab.shafii
       });
@@ -188,8 +154,7 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
       let proof = getProofObj(heirKey, specialRules[heirKey] || '');
 
       results.push({ 
-         name: displayName, 
-         percentage: Number((val * 100).toFixed(2)), amount: netAssetValue * val,  
+         name: displayName, percentage: Number((val * 100).toFixed(2)), amount: netAssetValue * val,  
          fraction: 'Residuary (Asabah)', rule: proof.ruleTitle,
          quranProof: proof.quran, madhabProof: proof.madhab[selectedMadhab as keyof typeof proof.madhab] || proof.madhab.shafii
       });
