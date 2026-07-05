@@ -25,8 +25,6 @@ export default function AlRahbiyyahDashboard() {
   const [madhab, setMadhab] = useState('shafii'); 
   const [results, setResults] = useState<any>(null); 
   const [isCalculating, setIsCalculating] = useState(false);
-  
-  // NEW: State to track which rows in the results table are expanded
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
   // 4. Shariah Sequencer Math
@@ -46,7 +44,7 @@ export default function AlRahbiyyahDashboard() {
     const { name, value } = e.target;
     setFinances(prev => ({ ...prev, [name]: value }));
     setResults(null);
-    setExpandedRows([]); // Reset expansions
+    setExpandedRows([]);
   };
 
   const updateHeir = (heirName: string, delta: number) => {
@@ -55,7 +53,7 @@ export default function AlRahbiyyahDashboard() {
       [heirName]: Math.max(0, (prev[heirName as keyof typeof heirs] || 0) + delta)
     }));
     setResults(null);
-    setExpandedRows([]); // Reset expansions
+    setExpandedRows([]);
   };
 
   const toggleRow = (idx: number) => {
@@ -64,13 +62,24 @@ export default function AlRahbiyyahDashboard() {
     );
   };
 
+  // Helper to get the correct book name based on the selected Madhab
+  const getMadhabBookName = () => {
+    switch (madhab) {
+      case 'shafii': return "Matn Al-Rahbiyyah";
+      case 'hanafi': return "Al-Sirajiyyah";
+      case 'maliki': return "Al-Jaybiyyah";
+      case 'hanbali': return "Nazm al-Mufradat";
+      default: return "Classical Jurisprudence";
+    }
+  };
+
   // THE EXECUTION TRIGGER
   const handleCalculate = () => {
     setIsCalculating(true);
     setExpandedRows([]);
     
     setTimeout(() => {
-      // --- DUMMY DATA WITH PROOFS FOR UI TESTING ---
+      // --- DUMMY DATA WITH DUAL-PROOFS FOR UI TESTING ---
       setResults([
         { 
           name: 'Husband', 
@@ -78,10 +87,15 @@ export default function AlRahbiyyahDashboard() {
           percentage: 25, 
           amount: netEstate * 0.25, 
           rule: 'Presence of inheriting descendants.',
-          proof: {
+          quranProof: {
             arabic: "فَإِن كَانَ لَهُنَّ وَلَدٌ فَلَكُمُ الرُّبُعُ مِمَّا تَرَكْنَ",
             translation: "But if they have a child, you get one-fourth of what they leave...",
             reference: "Surah An-Nisa [4:12]"
+          },
+          madhabProof: {
+            arabic: madhab === 'shafii' ? "وَالرُّبْعُ فَرْضُ الزَّوْجِ إِنْ كَانَ مَعَهْ ... مَنْ قَدْ مَنَعْهُ حَظَّهُ وَوَضَعَهْ" : "Classical Arabic text regarding the 1/4 share based on the selected school.",
+            translation: "And one-fourth is the obligatory share of the husband if there is with him a descendant who restricts his share...",
+            reference: `Chapter of the 1/4 Share (${getMadhabBookName()})`
           }
         },
         { 
@@ -90,10 +104,15 @@ export default function AlRahbiyyahDashboard() {
           percentage: 75, 
           amount: netEstate * 0.75, 
           rule: 'Takes the remainder as Asabah.',
-          proof: {
+          quranProof: {
             arabic: "يُوصِيكُمُ اللَّهُ فِي أَوْلادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الأُنثَيَيْنِ",
             translation: "Allah commands you regarding your children: for the male, what is equal to the share of two females...",
             reference: "Surah An-Nisa [4:11] (Asabah)"
+          },
+          madhabProof: {
+            arabic: madhab === 'shafii' ? "وَكُلُّ مَنْ أَحْرَزَ كُلَّ الْمَالِ ... مِنَ الْقَرَابَاتِ أَوِ الْمَوَالِي" : "Classical Arabic text regarding Asabah based on the selected school.",
+            translation: "And anyone who takes the entirety of the wealth (or remainder) from the relatives or freed slaves is an Asabah...",
+            reference: `Chapter of Asabah (${getMadhabBookName()})`
           }
         }
       ]);
@@ -115,7 +134,7 @@ export default function AlRahbiyyahDashboard() {
   return (
     <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-24">
       
-      {/* --- STEP 1: PRE-DISTRIBUTION SEQUENCER --- */}
+      {/* --- PRE-DISTRIBUTION SEQUENCER --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 relative z-10 gap-4">
           <div className="flex items-center">
@@ -187,7 +206,7 @@ export default function AlRahbiyyahDashboard() {
         </div>
       </div>
 
-      {/* --- STEP 2: MADHAB SELECTOR --- */}
+      {/* --- MADHAB SELECTOR --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
         <div className="flex items-center mb-6">
           <div className="w-10 h-10 rounded-full bg-emerald-900/50 text-emerald-400 flex items-center justify-center font-bold text-lg mr-4 border border-emerald-700/50">2</div>
@@ -206,7 +225,7 @@ export default function AlRahbiyyahDashboard() {
         </div>
       </div>
 
-      {/* --- STEP 3: SURVIVING HEIRS --- */}
+      {/* --- SURVIVING HEIRS --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
         <div className="flex items-center mb-8">
           <div className="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-lg mr-4 border border-purple-700/50">3</div>
@@ -245,7 +264,7 @@ export default function AlRahbiyyahDashboard() {
         </div>
       </div>
 
-      {/* --- STEP 4: EXECUTE CALCULATION BUTTON --- */}
+      {/* --- EXECUTE CALCULATION BUTTON --- */}
       <div className="flex justify-center py-6">
         <button 
           onClick={handleCalculate}
@@ -263,7 +282,7 @@ export default function AlRahbiyyahDashboard() {
         </button>
       </div>
 
-      {/* --- STEP 5: RESULTS DISPLAY TERMINAL --- */}
+      {/* --- RESULTS DISPLAY TERMINAL WITH DUAL PROOFS --- */}
       {results && (
         <div className="bg-[#030610] border border-yellow-600/50 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           
@@ -300,7 +319,7 @@ export default function AlRahbiyyahDashboard() {
                     <th className="p-4 font-semibold">Fraction</th>
                     <th className="p-4 font-semibold">Percentage</th>
                     <th className="p-4 font-semibold text-right">Monetary Payout</th>
-                    <th className="p-4 font-semibold text-center rounded-tr-lg">Proof</th>
+                    <th className="p-4 font-semibold text-center rounded-tr-lg">Proofs</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
@@ -329,32 +348,42 @@ export default function AlRahbiyyahDashboard() {
                           </td>
                         </tr>
                         
-                        {/* EXPANDABLE VERSE-TO-VARIABLE PROOF ROW */}
+                        {/* DUAL PROOF EXPANDABLE ROW */}
                         {isExpanded && (
                           <tr className="bg-[#030610]">
                             <td colSpan={5} className="p-0">
-                              <div className="p-6 border-l-2 border-yellow-600 bg-gradient-to-r from-yellow-900/10 to-transparent m-4 rounded-r-xl shadow-inner animate-in slide-in-from-top-2 duration-300">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 m-4 animate-in slide-in-from-top-2 duration-300">
                                 
-                                <div className="flex items-center gap-2 mb-4">
-                                  <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                  <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Shariah Textual Proof</span>
-                                </div>
-                                
-                                <div className="text-right mb-4">
-                                  <p className="text-2xl md:text-3xl text-yellow-400 font-bold leading-relaxed" dir="rtl">
-                                    "{heir.proof.arabic}"
-                                  </p>
-                                </div>
-                                
-                                <div>
-                                  <p className="text-slate-300 italic text-lg border-l-2 border-slate-700 pl-4 py-1">
-                                    {heir.proof.translation}
-                                  </p>
-                                  <div className="mt-4 inline-block px-3 py-1 bg-slate-800 text-yellow-500 text-xs font-semibold rounded-md border border-slate-700">
-                                    Ref: {heir.proof.reference}
+                                {/* 1. The Divine Text (Qur'an/Sunnah) */}
+                                <div className="p-6 border-l-2 border-yellow-600 bg-gradient-to-r from-yellow-900/10 to-transparent rounded-r-xl shadow-inner">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Divine Proof (Qur'an/Sunnah)</span>
+                                  </div>
+                                  <div className="text-right mb-4">
+                                    <p className="text-2xl text-yellow-400 font-bold leading-relaxed" dir="rtl">"{heir.quranProof.arabic}"</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-slate-300 italic text-sm border-l-2 border-slate-700 pl-4 py-1">{heir.quranProof.translation}</p>
+                                    <div className="mt-3 inline-block px-3 py-1 bg-slate-800 text-yellow-500 text-xs font-semibold rounded-md border border-slate-700">Ref: {heir.quranProof.reference}</div>
                                   </div>
                                 </div>
-                                
+
+                                {/* 2. The Madhab Text */}
+                                <div className="p-6 border-l-2 border-emerald-600 bg-gradient-to-r from-emerald-900/10 to-transparent rounded-r-xl shadow-inner">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                    <span className="text-emerald-500 font-bold uppercase tracking-widest text-xs">Juristic Text ({getMadhabBookName()})</span>
+                                  </div>
+                                  <div className="text-right mb-4">
+                                    <p className="text-2xl text-emerald-400 font-bold leading-relaxed" dir="rtl">"{heir.madhabProof.arabic}"</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-slate-300 italic text-sm border-l-2 border-slate-700 pl-4 py-1">{heir.madhabProof.translation}</p>
+                                    <div className="mt-3 inline-block px-3 py-1 bg-slate-800 text-emerald-500 text-xs font-semibold rounded-md border border-slate-700">Ref: {heir.madhabProof.reference}</div>
+                                  </div>
+                                </div>
+
                               </div>
                             </td>
                           </tr>
