@@ -5,6 +5,7 @@ import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
 import { proofsDatabase } from '../lib/proofsData';
 
 export default function AlRahbiyyahDashboard() {
+  // 1. Existing Heirs State
   const [heirs, setHeirs] = useState({
     husband: 0, wives: 0, 
     sons: 0, daughters: 0, grandsons: 0, granddaughters: 0,
@@ -12,6 +13,39 @@ export default function AlRahbiyyahDashboard() {
     full_brothers: 0, full_sisters: 0, paternal_brothers: 0, paternal_sisters: 0, maternal_siblings: 0, 
     unborn_foetus: 0
   });
+
+  // 2. NEW: Pre-Distribution Financial State (The Sequencer)
+  const [finances, setFinances] = useState({
+    grossEstate: '',
+    funeralCosts: '',
+    debts: '',
+    wasiyyah: ''
+  });
+
+  // 3. NEW: Shariah Sequencer Math (Calculates automatically on every keystroke)
+  const gross = parseFloat(finances.grossEstate) || 0;
+  const funeral = parseFloat(finances.funeralCosts) || 0;
+  const debts = parseFloat(finances.debts) || 0;
+  const requestedWasiyyah = parseFloat(finances.wasiyyah) || 0;
+
+  // Step A: Deduct Funeral & Debts first
+  const remainderAfterDebts = Math.max(0, gross - funeral - debts);
+  
+  // Step B: Calculate maximum Wasiyyah (Strict 1/3 limit of what remains)
+  const wasiyyahMaxLimit = remainderAfterDebts / 3;
+  
+  // Step C: Apply Wasiyyah (cap it if they enter too much)
+  const appliedWasiyyah = Math.min(requestedWasiyyah, wasiyyahMaxLimit);
+  const isWasiyyahExceeded = requestedWasiyyah > wasiyyahMaxLimit;
+  
+  // Step D: The Final Tarikah (Net Estate) available for Fara'id division
+  const netEstate = remainderAfterDebts - appliedWasiyyah;
+
+  // Helper to handle input typing smoothly
+  const handleFinanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFinances(prev => ({ ...prev, [name]: value }));
+  };
 
   const [madhab, setMadhab] = useState('shafii');
   const [showSpecialist, setShowSpecialist] = useState(false);
