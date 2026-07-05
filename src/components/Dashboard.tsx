@@ -20,9 +20,11 @@ export default function AlRahbiyyahDashboard() {
     wasiyyah: ''
   });
 
-  // 3. UI States (Currency & Madhab)
+  // 3. UI States (Currency, Madhab, Results)
   const [currency, setCurrency] = useState('₦');
-  const [madhab, setMadhab] = useState('shafii'); // Default to Shafi'i (Matn Al-Rahbiyyah)
+  const [madhab, setMadhab] = useState('shafii'); 
+  const [results, setResults] = useState<any>(null); // Holds the final Shariah calculation
+  const [isCalculating, setIsCalculating] = useState(false);
 
   // 4. Shariah Sequencer Math
   const gross = parseFloat(finances.grossEstate) || 0;
@@ -40,6 +42,7 @@ export default function AlRahbiyyahDashboard() {
   const handleFinanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFinances(prev => ({ ...prev, [name]: value }));
+    setResults(null); // Clear results if they change the money
   };
 
   const updateHeir = (heirName: string, delta: number) => {
@@ -47,6 +50,28 @@ export default function AlRahbiyyahDashboard() {
       ...prev,
       [heirName]: Math.max(0, (prev[heirName as keyof typeof heirs] || 0) + delta)
     }));
+    setResults(null); // Clear results if they change the heirs
+  };
+
+  // THE EXECUTION TRIGGER
+  const handleCalculate = () => {
+    setIsCalculating(true);
+    
+    // Simulate a brief calculation delay for a premium software feel
+    setTimeout(() => {
+      // --- INTEGRATION POINT ---
+      // Replace the dummy array below with your actual engine call:
+      // const finalShares = calculateUltimateRahbiyyah(heirs, madhab, netEstate);
+      // setResults(finalShares);
+      
+      // Temporary Dummy Data to showcase the UI
+      setResults([
+        { name: 'Husband', fraction: '1/4', percentage: 25, amount: netEstate * 0.25, rule: 'Presence of inheriting descendants.' },
+        { name: 'Son', fraction: '3/4', percentage: 75, amount: netEstate * 0.75, rule: 'Takes the remainder as Asabah.' }
+      ]);
+      
+      setIsCalculating(false);
+    }, 600);
   };
 
   // Helper component for Heir Counter Buttons
@@ -54,40 +79,29 @@ export default function AlRahbiyyahDashboard() {
     <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors">
       <span className="text-slate-300 font-medium">{label}</span>
       <div className="flex items-center gap-3">
-        <button 
-          onClick={() => updateHeir(name, -1)}
-          className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors"
-        >-</button>
+        <button onClick={() => updateHeir(name, -1)} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors">-</button>
         <span className="w-4 text-center text-white font-bold">{heirs[name as keyof typeof heirs]}</span>
-        <button 
-          onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }}
-          className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors"
-        >+</button>
+        <button onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }} className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors">+</button>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+    <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-24">
       
       {/* --- STEP 1: PRE-DISTRIBUTION SEQUENCER --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 relative z-10 gap-4">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center font-bold text-lg mr-4 border border-blue-700/50 shadow-[0_0_10px_rgba(59,130,246,0.2)]">1</div>
+            <div className="w-10 h-10 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center font-bold text-lg mr-4 border border-blue-700/50">1</div>
             <div>
               <h2 className="text-2xl font-bold text-white">Pre-Distribution Sequencer</h2>
               <p className="text-slate-400 text-sm mt-1">Determine the exact Net Estate (Tarikah) before Fara'id division.</p>
             </div>
           </div>
-          
           <div className="flex items-center bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 w-max">
             <span className="text-slate-400 text-sm mr-2">Currency:</span>
-            <select 
-              value={currency} 
-              onChange={(e) => setCurrency(e.target.value)}
-              className="bg-transparent text-yellow-500 font-bold focus:outline-none cursor-pointer appearance-none pr-4"
-            >
+            <select value={currency} onChange={(e) => { setCurrency(e.target.value); setResults(null); }} className="bg-transparent text-yellow-500 font-bold focus:outline-none cursor-pointer appearance-none pr-4">
               <option value="₦">NGN (₦)</option>
               <option value="$">USD ($)</option>
               <option value="£">GBP (£)</option>
@@ -101,40 +115,28 @@ export default function AlRahbiyyahDashboard() {
             <label className="block text-slate-300 font-semibold mb-2">Total Gross Estate Value</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">{currency}</span>
-              <input 
-                type="number" name="grossEstate" value={finances.grossEstate} onChange={handleFinanceChange}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-yellow-500 transition-all shadow-inner" placeholder="0.00"
-              />
+              <input type="number" name="grossEstate" value={finances.grossEstate} onChange={handleFinanceChange} className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-yellow-500 transition-all shadow-inner" placeholder="0.00" />
             </div>
           </div>
           <div>
             <label className="block text-slate-300 font-semibold mb-2">Funeral & Burial Expenses</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500/70 font-bold">-{currency}</span>
-              <input 
-                type="number" name="funeralCosts" value={finances.funeralCosts} onChange={handleFinanceChange}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 transition-all shadow-inner" placeholder="0.00"
-              />
+              <input type="number" name="funeralCosts" value={finances.funeralCosts} onChange={handleFinanceChange} className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 transition-all shadow-inner" placeholder="0.00" />
             </div>
           </div>
           <div>
             <label className="block text-slate-300 font-semibold mb-2">Outstanding Debts</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500/70 font-bold">-{currency}</span>
-              <input 
-                type="number" name="debts" value={finances.debts} onChange={handleFinanceChange}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 transition-all shadow-inner" placeholder="0.00"
-              />
+              <input type="number" name="debts" value={finances.debts} onChange={handleFinanceChange} className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 transition-all shadow-inner" placeholder="0.00" />
             </div>
           </div>
           <div>
             <label className="block text-slate-300 font-semibold mb-2">Documented Will (Wasiyyah)</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-600/70 font-bold">-{currency}</span>
-              <input 
-                type="number" name="wasiyyah" value={finances.wasiyyah} onChange={handleFinanceChange}
-                className={`w-full bg-slate-950 border ${isWasiyyahExceeded ? 'border-red-500/80 focus:border-red-500' : 'border-slate-700 focus:border-yellow-500'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none transition-all shadow-inner`} placeholder="0.00"
-              />
+              <input type="number" name="wasiyyah" value={finances.wasiyyah} onChange={handleFinanceChange} className={`w-full bg-slate-950 border ${isWasiyyahExceeded ? 'border-red-500/80 focus:border-red-500' : 'border-slate-700 focus:border-yellow-500'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none transition-all shadow-inner`} placeholder="0.00" />
             </div>
             {isWasiyyahExceeded && (
                <p className="text-red-400 text-sm mt-2 flex items-center font-medium animate-pulse">
@@ -162,25 +164,15 @@ export default function AlRahbiyyahDashboard() {
       {/* --- STEP 2: MADHAB SELECTOR --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
         <div className="flex items-center mb-6">
-          <div className="w-10 h-10 rounded-full bg-emerald-900/50 text-emerald-400 flex items-center justify-center font-bold text-lg mr-4 border border-emerald-700/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]">2</div>
+          <div className="w-10 h-10 rounded-full bg-emerald-900/50 text-emerald-400 flex items-center justify-center font-bold text-lg mr-4 border border-emerald-700/50">2</div>
           <div>
             <h2 className="text-2xl font-bold text-white">Jurisprudence (Madhab)</h2>
             <p className="text-slate-400 text-sm mt-1">Select the specific school of thought for mathematical algorithms.</p>
           </div>
         </div>
-        
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { id: 'shafii', name: "Shafi'i", text: "Matn Al-Rahbiyyah" },
-            { id: 'hanafi', name: "Hanafi", text: "Al-Sirajiyyah" },
-            { id: 'maliki', name: "Maliki", text: "Al-Jaybiyyah" },
-            { id: 'hanbali', name: "Hanbali", text: "Nazm al-Mufradat" }
-          ].map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setMadhab(m.id)}
-              className={`p-4 rounded-xl border text-left transition-all duration-300 ${madhab === m.id ? 'bg-yellow-600/10 border-yellow-500 shadow-[0_0_15px_rgba(202,138,4,0.15)]' : 'bg-slate-950 border-slate-800 hover:border-slate-600'}`}
-            >
+          {[ { id: 'shafii', name: "Shafi'i", text: "Matn Al-Rahbiyyah" }, { id: 'hanafi', name: "Hanafi", text: "Al-Sirajiyyah" }, { id: 'maliki', name: "Maliki", text: "Al-Jaybiyyah" }, { id: 'hanbali', name: "Hanbali", text: "Nazm al-Mufradat" } ].map((m) => (
+            <button key={m.id} onClick={() => { setMadhab(m.id); setResults(null); }} className={`p-4 rounded-xl border text-left transition-all duration-300 ${madhab === m.id ? 'bg-yellow-600/10 border-yellow-500 shadow-[0_0_15px_rgba(202,138,4,0.15)]' : 'bg-slate-950 border-slate-800 hover:border-slate-600'}`}>
               <div className={`font-bold text-lg ${madhab === m.id ? 'text-yellow-400' : 'text-white'}`}>{m.name}</div>
               <div className="text-xs text-slate-500 mt-1">{m.text}</div>
             </button>
@@ -191,15 +183,13 @@ export default function AlRahbiyyahDashboard() {
       {/* --- STEP 3: SURVIVING HEIRS --- */}
       <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
         <div className="flex items-center mb-8">
-          <div className="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-lg mr-4 border border-purple-700/50 shadow-[0_0_10px_rgba(168,85,247,0.2)]">3</div>
+          <div className="w-10 h-10 rounded-full bg-purple-900/50 text-purple-400 flex items-center justify-center font-bold text-lg mr-4 border border-purple-700/50">3</div>
           <div>
             <h2 className="text-2xl font-bold text-white">Surviving Heirs</h2>
             <p className="text-slate-400 text-sm mt-1">Add the living relatives. The engine automatically handles Hajb (exclusion) rules.</p>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Column 1: Spouses & Descendants */}
           <div className="space-y-4">
             <h3 className="text-yellow-600 font-bold uppercase tracking-wider text-sm border-b border-slate-800 pb-2">Spouses & Descendants</h3>
             <HeirCounter name="husband" label="Husband" max={1} />
@@ -209,8 +199,6 @@ export default function AlRahbiyyahDashboard() {
             <HeirCounter name="grandsons" label="Grandsons (Paternal)" />
             <HeirCounter name="granddaughters" label="Granddaughters (Paternal)" />
           </div>
-
-          {/* Column 2: Ascendants */}
           <div className="space-y-4">
             <h3 className="text-yellow-600 font-bold uppercase tracking-wider text-sm border-b border-slate-800 pb-2">Parents & Grandparents</h3>
             <HeirCounter name="father" label="Father" max={1} />
@@ -219,8 +207,6 @@ export default function AlRahbiyyahDashboard() {
             <HeirCounter name="paternal_grandmother" label="Paternal Grandmother" max={1} />
             <HeirCounter name="maternal_grandmother" label="Maternal Grandmother" max={1} />
           </div>
-
-          {/* Column 3: Siblings & Others */}
           <div className="space-y-4">
             <h3 className="text-yellow-600 font-bold uppercase tracking-wider text-sm border-b border-slate-800 pb-2">Siblings & Foetus</h3>
             <HeirCounter name="full_brothers" label="Full Brothers" />
@@ -232,6 +218,71 @@ export default function AlRahbiyyahDashboard() {
           </div>
         </div>
       </div>
+
+      {/* --- STEP 4: EXECUTE CALCULATION BUTTON --- */}
+      <div className="flex justify-center py-6">
+        <button 
+          onClick={handleCalculate}
+          disabled={isCalculating || netEstate <= 0}
+          className={`px-12 py-5 rounded-full font-extrabold text-xl transition-all duration-300 shadow-[0_0_40px_rgba(5,150,105,0.4)] border flex items-center ${isCalculating || netEstate <= 0 ? 'bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed' : 'bg-emerald-600 text-white border-emerald-400/50 hover:bg-emerald-500 hover:scale-105'}`}
+        >
+          {isCalculating ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              Processing Shariah Logic...
+            </>
+          ) : (
+            <>Calculate Estate Shares</>
+          )}
+        </button>
+      </div>
+
+      {/* --- STEP 5: RESULTS DISPLAY TERMINAL --- */}
+      {results && (
+        <div className="bg-[#030610] border border-yellow-600/50 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+          
+          <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] border-b border-slate-800 p-6 md:p-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">Final Distribution</h2>
+              <p className="text-slate-400 mt-1">Verified mathematically via the {madhab.charAt(0).toUpperCase() + madhab.slice(1)} School.</p>
+            </div>
+            <div className="hidden md:block text-right">
+              <span className="text-sm text-slate-500 block mb-1">Total Tarikah Distributed</span>
+              <span className="text-2xl font-bold text-emerald-400">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+
+          <div className="p-6 md:p-8">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-500 text-sm uppercase tracking-wider">
+                    <th className="pb-4 font-semibold">Surviving Heir</th>
+                    <th className="pb-4 font-semibold">Quranic Fraction</th>
+                    <th className="pb-4 font-semibold">Percentage</th>
+                    <th className="pb-4 font-semibold text-right">Monetary Payout</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {results.map((heir: any, idx: number) => (
+                    <tr key={idx} className="hover:bg-slate-900/50 transition-colors group">
+                      <td className="py-5">
+                        <span className="font-bold text-white text-lg block">{heir.name}</span>
+                        <span className="text-xs text-slate-500">{heir.rule}</span>
+                      </td>
+                      <td className="py-5 font-mono text-yellow-500 text-xl">{heir.fraction}</td>
+                      <td className="py-5 text-slate-300 font-semibold">{heir.percentage}%</td>
+                      <td className="py-5 text-right font-bold text-emerald-400 text-xl">
+                        {currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
