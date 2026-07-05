@@ -1,5 +1,5 @@
 // src/lib/mathEngine.ts
-import { proofsDatabase } from './proofsData';
+import { proofsDatabase, ShareProof } from './proofsData';
 
 export interface HeirsList {
   husband: number; wives: number; sons: number; daughters: number;
@@ -96,32 +96,41 @@ export function calculateUltimateRahbiyyah(heirs: HeirsList, selectedMadhab: str
     }
   }
 
-  // --- THE BULLETPROOF FETCHER ---
+  // --- THE ULTIMATE FAILSAFE FETCHER ---
   const getProofObj = (key: string, rule: string) => {
+    let proof: ShareProof | undefined = undefined;
+
     // 1. Direct hit for Complex Cases (Al-Gharrawayn, etc)
-    if (rule === 'gharrawayn' && proofsDatabase.complex_cases?.gharrawayn) return proofsDatabase.complex_cases.gharrawayn;
-    if (rule === 'akdariyyah' && proofsDatabase.complex_cases?.akdariyyah) return proofsDatabase.complex_cases.akdariyyah;
+    if (rule === 'gharrawayn') proof = proofsDatabase.complex_cases?.gharrawayn;
+    else if (rule === 'akdariyyah') proof = proofsDatabase.complex_cases?.akdariyyah;
+    else if (rule === 'mushtarakah') proof = proofsDatabase.complex_cases?.mushtarakah;
 
     // 2. Direct hit for Standard Shares
-    if (key.includes('Husband')) return hasDescendants ? proofsDatabase.husband.quarter_share : proofsDatabase.husband.half_share;
-    if (key.includes('Wives')) return hasDescendants ? proofsDatabase.wives.eighth_share : proofsDatabase.wives.quarter_share;
-    if (key.includes('Daughters')) return heirs.daughters > 1 ? proofsDatabase.daughters.two_thirds_share : proofsDatabase.daughters.half_share;
-    if (key.includes('Sons')) return proofsDatabase.sons.asabah;
-    if (key.includes('Mother')) return proofsDatabase.mother.general;
-    if (key.includes('Father')) return proofsDatabase.father.general;
-    if (key.includes('Full Brothers') || key.includes('Full Sisters')) return proofsDatabase.full_brothers.general;
+    if (!proof) {
+      if (key.includes('Husband')) proof = hasDescendants ? proofsDatabase.husband?.quarter_share : proofsDatabase.husband?.half_share;
+      else if (key.includes('Wives')) proof = hasDescendants ? proofsDatabase.wives?.eighth_share : proofsDatabase.wives?.quarter_share;
+      else if (key.includes('Daughters')) proof = heirs.daughters > 1 ? proofsDatabase.daughters?.two_thirds_share : proofsDatabase.daughters?.half_share;
+      else if (key.includes('Sons')) proof = proofsDatabase.sons?.asabah;
+      else if (key.includes('Mother')) proof = proofsDatabase.mother?.general;
+      else if (key.includes('Father') || key.includes('Paternal Grandfather')) proof = proofsDatabase.father?.general;
+      else if (key.includes('Full Brothers') || key.includes('Full Sisters')) proof = proofsDatabase.full_brothers?.general;
+    }
 
-    // 3. Fallback (If you see this, something missed!)
-    return {
-      ruleTitle: "General Verification",
-      quran: { arabic: "يُوصِيكُمُ اللَّهُ فِي أَوْلَادِكُمْ", translation: "General distribution parameters...", reference: "Al-Qur'an" },
-      madhab: {
-        shafii: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Rahbiyyah" },
-        hanafi: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Sirajiyyah" },
-        maliki: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Al-Jaybiyyah" },
-        hanbali: { arabic: "قاعدة عامة", translation: "General rules of distribution apply.", reference: "Nazm al-Mufradat" }
-      }
-    };
+    // 3. THE FAILSAFE: If Next.js cache hides the data, print an obvious warning instead of a blank space.
+    if (!proof || !proof.quran || !proof.madhab) {
+      return {
+        ruleTitle: rule === 'gharrawayn' ? "Al-Gharrawayn (Turbopack Cache Blocked)" : "Fara'id Verification",
+        quran: { arabic: "⚠️ قاعدة البيانات غير متصلة", translation: "Turbopack Cache is hiding the Database. See Step 2.", reference: "System Error" },
+        madhab: {
+          shafii: { arabic: "⚠️ مسح الذاكرة مطلوب", translation: "Turbopack Cache error.", reference: "Error" },
+          hanafi: { arabic: "⚠️ مسح الذاكرة مطلوب", translation: "Turbopack Cache error.", reference: "Error" },
+          maliki: { arabic: "⚠️ مسح الذاكرة مطلوب", translation: "Turbopack Cache error.", reference: "Error" },
+          hanbali: { arabic: "⚠️ مسح الذاكرة مطلوب", translation: "Turbopack Cache error.", reference: "Error" }
+        }
+      };
+    }
+
+    return proof;
   };
 
   const toFractionString = (decimal: number) => {
