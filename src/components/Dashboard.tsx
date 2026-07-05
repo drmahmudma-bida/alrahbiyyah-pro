@@ -241,14 +241,31 @@ export default function AlRahbiyyahDashboard() {
       {results && (
         <div className="bg-[#030610] border border-yellow-600/50 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           
-          <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] border-b border-slate-800 p-6 md:p-8 flex items-center justify-between">
-            <div>
+          <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] border-b border-slate-800 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
               <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">Final Distribution</h2>
               <p className="text-slate-400 mt-1">Verified mathematically via the {madhab.charAt(0).toUpperCase() + madhab.slice(1)} School.</p>
             </div>
-            <div className="hidden md:block text-right">
-              <span className="text-sm text-slate-500 block mb-1">Total Tarikah Distributed</span>
-              <span className="text-2xl font-bold text-emerald-400">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            
+            <div className="flex items-center gap-6 bg-slate-950/50 px-6 py-3 rounded-xl border border-slate-800/80">
+              <div className="text-right">
+                <span className="text-xs text-slate-500 uppercase tracking-widest block mb-1">Total Tarikah Distributed</span>
+                <span className="text-2xl font-bold text-emerald-400">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              
+              {/* --- THE 100% CIRCULAR PROGRESS RING --- */}
+              <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0 bg-slate-900 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.2)] border border-slate-700/50">
+                <svg className="w-full h-full transform -rotate-90 p-1" viewBox="0 0 36 36">
+                  {/* Background Track */}
+                  <path className="text-slate-800" strokeWidth="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  {/* Glowing Emerald Progress Ring */}
+                  <path className="text-emerald-500" strokeWidth="2.5" strokeDasharray="100, 100" strokeDashoffset="0" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" style={{ transition: "stroke-dashoffset 1.5s ease-in-out" }} />
+                </svg>
+                <div className="absolute flex flex-col items-center justify-center mt-0.5">
+                  <span className="text-emerald-400 font-black text-sm leading-none">100%</span>
+                  <span className="text-[0.4rem] text-slate-400 uppercase tracking-widest mt-0.5">Allocated</span>
+                </div>
+              </div>
             </div>
           </div>
 
