@@ -1,8 +1,7 @@
-"use client";
-
 import React, { useState } from 'react';
-import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
-import { proofsDatabase } from '../lib/proofsData';
+// These imports assume you have your math engine and proofs files ready
+// import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
+// import { proofsDatabase } from '../lib/proofsData';
 
 export default function AlRahbiyyahDashboard() {
   // 1. Existing Heirs State
@@ -14,7 +13,7 @@ export default function AlRahbiyyahDashboard() {
     unborn_foetus: 0
   });
 
-  // 2. NEW: Pre-Distribution Financial State (The Sequencer)
+  // 2. Pre-Distribution Financial State (The Sequencer)
   const [finances, setFinances] = useState({
     grossEstate: '',
     funeralCosts: '',
@@ -22,7 +21,10 @@ export default function AlRahbiyyahDashboard() {
     wasiyyah: ''
   });
 
-  // 3. NEW: Shariah Sequencer Math (Calculates automatically on every keystroke)
+  // 3. Currency Selector State (Defaults to Naira)
+  const [currency, setCurrency] = useState('₦');
+
+  // 4. Shariah Sequencer Math (Calculates automatically)
   const gross = parseFloat(finances.grossEstate) || 0;
   const funeral = parseFloat(finances.funeralCosts) || 0;
   const debts = parseFloat(finances.debts) || 0;
@@ -47,157 +49,129 @@ export default function AlRahbiyyahDashboard() {
     setFinances(prev => ({ ...prev, [name]: value }));
   };
 
-  const [madhab, setMadhab] = useState('shafii');
-  const [showSpecialist, setShowSpecialist] = useState(false);
-
-  const calculate = () => calculateUltimateRahbiyyah(heirs, madhab, 100000);
-
-  const updateHeir = (key: keyof typeof heirs, delta: number) => {
-    setHeirs((prev) => {
-      let newValue = Math.max(0, prev[key] + delta);
-      
-      // Biological Constraints
-      if (['husband', 'father', 'mother', 'paternal_grandfather', 'paternal_grandmother', 'maternal_grandmother', 'unborn_foetus'].includes(key) && newValue > 1) newValue = 1;
-      if (key === 'wives' && newValue > 4) newValue = 4;
-
-      let updatedHeirs = { ...prev, [key]: newValue };
-      if (key === 'husband' && newValue > 0) updatedHeirs.wives = 0;
-      if (key === 'wives' && newValue > 0) updatedHeirs.husband = 0;
-
-      return updatedHeirs;
-    });
-  };
-
-  const results = calculate();
-
-  const handlePrint = () => {
-    setShowSpecialist(true);
-    setTimeout(() => window.print(), 300);
-  };
-
-  const heirInputs = [
-    { category: "Spouses", items: [{ label: 'Husband', key: 'husband' }, { label: 'Wives', key: 'wives' }] },
-    { category: "Descendants", items: [{ label: 'Sons', key: 'sons' }, { label: 'Daughters', key: 'daughters' }, { label: "Son's Sons", key: 'grandsons' }, { label: "Son's Daughters", key: 'granddaughters' }] },
-    { category: "Ascendants", items: [{ label: 'Father', key: 'father' }, { label: 'Mother', key: 'mother' }, { label: 'Pat. Grandfather', key: 'paternal_grandfather' }, { label: 'Pat. Grandmother', key: 'paternal_grandmother' }, { label: 'Mat. Grandmother', key: 'maternal_grandmother' }] },
-    { category: "Siblings & Others", items: [{ label: 'Full Brothers', key: 'full_brothers' }, { label: 'Full Sisters', key: 'full_sisters' }, { label: 'Pat. Brothers', key: 'paternal_brothers' }, { label: 'Pat. Sisters', key: 'paternal_sisters' }, { label: 'Maternal Siblings', key: 'maternal_siblings' }, { label: 'Unborn Foetus', key: 'unborn_foetus' }] }
-  ] as const;
-
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 p-8 font-sans print:bg-[#faf9f6] print:text-gray-900 print:p-0">
+    <div className="w-full max-w-7xl mx-auto p-4 md:p-8">
       
-      <header className="mb-10 text-center print:hidden">
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-yellow-300">Al-Rahbiyyah Pro</h1>
-        <p className="text-gray-400 mt-2 tracking-wide text-sm uppercase">The Definitive Islamic Estate Framework</p>
-      </header>
-
-      <div className="hidden print:block w-full bg-slate-900 border-b-8 border-yellow-600 text-center py-10 mb-10 shadow-sm" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
-        <h1 className="text-4xl font-extrabold text-yellow-500 tracking-tight">AL-RAHBIYYAH PRO</h1>
-        <p className="text-yellow-100 mt-2 uppercase tracking-[0.3em] text-xs font-semibold">Official Estate Distribution Certificate</p>
-        <div className="mt-6 inline-block bg-slate-800 border border-yellow-700/50 px-6 py-2 rounded-full">
-          <p className="text-yellow-400 text-sm font-bold uppercase tracking-widest">Jurisprudence: {madhab} Madhab</p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 print:block print:max-w-full print:mx-8">
+      {/* --- STEP 1: PRE-DISTRIBUTION SEQUENCER --- */}
+      <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl mb-8 relative overflow-hidden">
         
-        {/* INPUT ENGINE */}
-        <div className="lg:col-span-1 bg-gray-900 border border-yellow-700/30 p-6 rounded-xl shadow-2xl h-fit print:hidden overflow-y-auto max-h-[85vh]">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-yellow-500">Family Structure</h2>
-            <select className="bg-gray-800 text-yellow-500 border border-yellow-600 rounded text-xs p-1" value={madhab} onChange={(e) => setMadhab(e.target.value)}>
-              <option value="shafii">Shafi'i (Strict)</option>
-              <option value="hanafi">Hanafi (Radd)</option>
-              <option value="maliki">Maliki (Bayt al-Mal)</option>
-              <option value="hanbali">Hanbali (Grandmother)</option>
+        <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 relative z-10 gap-4">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center font-bold text-lg mr-4 border border-blue-700/50 shadow-[0_0_10px_rgba(59,130,246,0.2)]">1</div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Pre-Distribution Sequencer</h2>
+              <p className="text-slate-400 text-sm mt-1">Determine the exact Net Estate (Tarikah) before Fara'id division.</p>
+            </div>
+          </div>
+          
+          {/* CURRENCY SELECTOR DROPDOWN */}
+          <div className="flex items-center bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 w-max">
+            <span className="text-slate-400 text-sm mr-2">Currency:</span>
+            <select 
+              value={currency} 
+              onChange={(e) => setCurrency(e.target.value)}
+              className="bg-transparent text-yellow-500 font-bold focus:outline-none cursor-pointer appearance-none pr-4"
+            >
+              <option value="₦">NGN (₦)</option>
+              <option value="$">USD ($)</option>
+              <option value="£">GBP (£)</option>
+              <option value="€">EUR (€)</option>
             </select>
           </div>
-
-          {heirInputs.map((group, idx) => (
-            <div key={idx} className="mb-6">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 border-b border-gray-800 pb-1">{group.category}</h3>
-              <div className="space-y-3">
-                {group.items.map(({ label, key }) => (
-                  <div key={key} className="flex justify-between items-center bg-gray-800/50 p-2 rounded">
-                    <span className="text-gray-300 text-sm">{label}</span>
-                    <div className="flex items-center space-x-3">
-                      <button onClick={() => updateHeir(key, -1)} className="w-7 h-7 rounded bg-gray-700 hover:bg-gray-600 text-yellow-500 font-bold transition-colors flex items-center justify-center">-</button>
-                      <span className="w-4 text-center font-bold text-sm">{heirs[key]}</span>
-                      <button onClick={() => updateHeir(key, 1)} className="w-7 h-7 rounded bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-bold transition-colors flex items-center justify-center">+</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative z-10">
+          {/* Gross Estate */}
+          <div>
+            <label className="block text-slate-300 font-semibold mb-2">Total Gross Estate Value</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">{currency}</span>
+              <input 
+                type="number" 
+                name="grossEstate"
+                value={finances.grossEstate}
+                onChange={handleFinanceChange}
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-all shadow-inner"
+                placeholder="0.00"
+              />
             </div>
-          ))}
+          </div>
+
+          {/* Funeral Costs */}
+          <div>
+            <label className="block text-slate-300 font-semibold mb-2">Funeral & Burial Expenses</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500/70 font-bold">-{currency}</span>
+              <input 
+                type="number" 
+                name="funeralCosts"
+                value={finances.funeralCosts}
+                onChange={handleFinanceChange}
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all shadow-inner"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Debts */}
+          <div>
+            <label className="block text-slate-300 font-semibold mb-2">Outstanding Debts</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-500/70 font-bold">-{currency}</span>
+              <input 
+                type="number" 
+                name="debts"
+                value={finances.debts}
+                onChange={handleFinanceChange}
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all shadow-inner"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Wasiyyah */}
+          <div>
+            <label className="block text-slate-300 font-semibold mb-2">Documented Will (Wasiyyah)</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-600/70 font-bold">-{currency}</span>
+              <input 
+                type="number" 
+                name="wasiyyah"
+                value={finances.wasiyyah}
+                onChange={handleFinanceChange}
+                className={`w-full bg-slate-950 border ${isWasiyyahExceeded ? 'border-red-500/80 focus:border-red-500 focus:ring-red-500' : 'border-slate-700 focus:border-yellow-500 focus:ring-yellow-500'} rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:ring-1 transition-all shadow-inner`}
+                placeholder="0.00"
+              />
+            </div>
+            {/* The Auto-Warning for Exceeding 1/3 */}
+            {isWasiyyahExceeded && (
+               <p className="text-red-400 text-sm mt-2 flex items-center font-medium animate-pulse">
+                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                 Shariah Cap Applied: Maximum 1/3 allowed is {currency}{wasiyyahMaxLimit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+               </p>
+            )}
+          </div>
         </div>
 
-        {/* OUTPUT SCREEN */}
-        <div className="lg:col-span-2 space-y-6 print:space-y-10">
-          <div className="flex justify-end print:hidden">
-            <button onClick={handlePrint} className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-gray-950 font-bold py-3 px-6 rounded-lg shadow-[0_0_15px_rgba(202,138,4,0.4)] hover:scale-105 transition-all flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-              Generate Official Report
-            </button>
+        {/* Tarikah Summary Banner */}
+        <div className="bg-[#030610] border border-emerald-900/50 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center relative overflow-hidden z-10 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/10 to-transparent pointer-events-none"></div>
+          <div className="mb-4 md:mb-0 relative z-10">
+            <h3 className="text-slate-300 font-bold text-lg mb-1">Final Net Estate (Tarikah)</h3>
+            <p className="text-sm text-emerald-400/80">Available for Fara'id division after all mandatory deductions.</p>
           </div>
-
-          <div className="bg-gray-900 border border-yellow-700/30 p-6 rounded-xl shadow-2xl flex flex-col items-center justify-center min-h-[300px] print:bg-white print:border-2 print:border-yellow-600 print:shadow-none print:rounded-2xl print:p-8" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
-             <div className="hidden print:block w-full border-b-2 border-gray-100 pb-4 mb-6 text-center"><h2 className="text-2xl font-bold text-slate-800 uppercase tracking-widest">Final Distribution</h2></div>
-             <div className="w-48 h-48 rounded-full border-8 border-gray-800 flex items-center justify-center mb-8 relative print:border-slate-100">
-                <div className="absolute w-full h-full rounded-full border-t-8 border-yellow-500 rotate-45 transition-transform duration-500 print:border-yellow-500"></div>
-                <div className="text-center"><p className="text-gray-400 text-xs uppercase print:text-slate-500 font-bold tracking-wider">Total Distributed</p><p className="text-2xl font-bold text-yellow-500 print:text-slate-900 text-3xl">100%</p></div>
-             </div>
-             <div className="w-full grid grid-cols-2 gap-4 print:gap-6">
-                {results.map((r, i) => (
-                  <div key={i} className="bg-gray-800 p-4 rounded-lg flex justify-between items-center border-l-4 border-yellow-500 shadow-md print:bg-slate-50 print:border-l-8 print:border-yellow-500 print:rounded-xl print:shadow-sm">
-                    <div>
-                      <h3 className="font-bold text-white text-sm print:text-slate-900 print:text-lg">{r.heir}</h3>
-                      <p className="text-xs text-gray-400 print:text-slate-500 font-mono mt-1">{r.fraction}</p>
-                    </div>
-                    <span className="text-xl font-bold text-yellow-400 print:text-slate-900 print:text-2xl">{r.percentage}%</span>
-                  </div>
-                ))}
-             </div>
-          </div>
-
-          <div className="bg-gray-900 border border-gray-700 p-1 rounded-xl shadow-2xl print:bg-transparent print:border-0 print:shadow-none print:p-0">
-            <button onClick={() => setShowSpecialist(!showSpecialist)} className="w-full flex justify-between items-center p-4 text-gray-300 hover:text-yellow-500 transition-colors print:hidden">
-              <span className="font-semibold text-sm tracking-widest uppercase">Academic Proofs (Verified Database)</span><span>{showSpecialist ? '▲' : '▼'}</span>
-            </button>
-            <div className={`${showSpecialist ? 'block' : 'hidden'} print:block p-6 border-t border-gray-800 bg-gray-950/50 print:bg-transparent print:border-0 print:p-0 print:mt-10`}>
-              <div className="hidden print:flex items-center justify-center gap-4 mb-8">
-                <div className="h-px bg-yellow-600 flex-grow"></div><h2 className="text-xl font-bold text-slate-900 uppercase tracking-[0.2em] px-4">Jurisprudential Basis (Al-Adillah)</h2><div className="h-px bg-yellow-600 flex-grow"></div>
-              </div>
-              <div className="space-y-8 print:space-y-6">
-                {results.map((r, i) => {
-                  const targetKey = r.lookupKey || r.heir;
-                  const heirData = proofsDatabase[targetKey];
-                  const proofData = heirData?.[madhab];
-                  const quranData = heirData?.quran_verse;
-                  return (
-                    <div key={i} className="flex flex-col space-y-4 pb-6 border-b border-gray-800 print:border-gray-300 print:pb-8 print:break-inside-avoid last:border-0 last:pb-0" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
-                      <div className="flex items-center"><span className="text-yellow-500 text-lg font-bold print:text-slate-900 uppercase tracking-wide print:bg-yellow-100 print:px-4 print:py-1 print:rounded-sm border-l-4 border-yellow-600 pl-3">{r.heir}</span></div>
-                      {quranData && (
-                        <div className="bg-emerald-950/30 border-l-4 border-emerald-600 p-4 rounded-r print:bg-emerald-50 print:border-emerald-600 print:shadow-sm">
-                          <span className="text-emerald-500 text-xs font-bold uppercase tracking-widest print:text-emerald-700">Divine Text & Principle - {quranData.reference}</span>
-                          <p className="text-right text-2xl font-arabic text-emerald-100 leading-loose py-3 print:text-slate-900" dir="rtl">{quranData.arabic}</p>
-                          <p className="text-sm text-emerald-200/70 italic print:text-slate-600 print:font-medium">"{quranData.english}"</p>
-                        </div>
-                      )}
-                      <div className="pl-2 print:pl-4 print:border-l-2 print:border-slate-200 print:ml-2 mt-4">
-                        <span className="text-gray-500 text-xs font-mono bg-gray-800 px-2 py-1 rounded print:bg-slate-800 print:text-yellow-400 inline-block mb-3 font-bold">Madhab Derivation: {proofData ? proofData.textbook : "Awaiting Verification"}</span>
-                        {proofData ? (
-                          <><p className="text-right text-lg font-arabic text-gray-300 leading-loose py-1 print:text-slate-800" dir="rtl">{proofData.arabic}</p><p className="text-sm text-gray-400 italic border-l-2 border-yellow-700/50 pl-3 print:text-slate-500 print:border-slate-300">"{proofData.english}"</p></>
-                        ) : (<p className="text-sm text-gray-500 italic print:text-slate-400">Academic derivation for {targetKey} in {madhab.toUpperCase()} is queued for pending update.</p>)}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          <div className="relative z-10 text-right flex items-center justify-end">
+            <span className="text-2xl text-emerald-500 mr-2 font-bold">{currency}</span>
+            <span className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600 drop-shadow-sm">
+              {netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
           </div>
         </div>
       </div>
-      <div className="hidden print:block fixed bottom-0 left-0 w-full text-center py-4 bg-white border-t border-gray-200" style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}><p className="text-slate-500 text-xs uppercase tracking-widest font-bold">Generated securely by Al-Rahbiyyah Pro</p></div>
+
+      {/* --- NEXT STEPS PLACEHOLDERS --- */}
+      {/* We will build the Madhab Selector and Heirs Input Grid here next */}
+      
     </div>
   );
 }
