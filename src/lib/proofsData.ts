@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-// Import the database we just built!
 import { proofsDatabase } from '../lib/proofsData';
 // import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
 
 export default function AlRahbiyyahDashboard() {
-  // 1. Existing Heirs State
   const [heirs, setHeirs] = useState({
     husband: 0, wives: 0, 
     sons: 0, daughters: 0, grandsons: 0, granddaughters: 0,
@@ -13,22 +11,16 @@ export default function AlRahbiyyahDashboard() {
     unborn_foetus: 0
   });
 
-  // 2. Pre-Distribution Financial State
   const [finances, setFinances] = useState({
-    grossEstate: '',
-    funeralCosts: '',
-    debts: '',
-    wasiyyah: ''
+    grossEstate: '', funeralCosts: '', debts: '', wasiyyah: ''
   });
 
-  // 3. UI States
   const [currency, setCurrency] = useState('₦');
   const [madhab, setMadhab] = useState('shafii'); 
   const [results, setResults] = useState<any>(null); 
   const [isCalculating, setIsCalculating] = useState(false);
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
-  // 4. Shariah Sequencer Math
   const gross = parseFloat(finances.grossEstate) || 0;
   const funeral = parseFloat(finances.funeralCosts) || 0;
   const debts = parseFloat(finances.debts) || 0;
@@ -40,7 +32,6 @@ export default function AlRahbiyyahDashboard() {
   const isWasiyyahExceeded = requestedWasiyyah > wasiyyahMaxLimit;
   const netEstate = remainderAfterDebts - appliedWasiyyah;
 
-  // Handlers
   const handleFinanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFinances(prev => ({ ...prev, [name]: value }));
@@ -58,9 +49,7 @@ export default function AlRahbiyyahDashboard() {
   };
 
   const toggleRow = (idx: number) => {
-    setExpandedRows(prev => 
-      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
-    );
+    setExpandedRows(prev => prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]);
   };
 
   const getMadhabBookName = () => {
@@ -73,16 +62,17 @@ export default function AlRahbiyyahDashboard() {
     }
   };
 
-  // THE EXECUTION TRIGGER - NOW CONNECTED TO THE DATABASE
+  // THE EXECUTION TRIGGER - STRICTLY CONNECTED TO DATABASE
   const handleCalculate = () => {
     setIsCalculating(true);
     setExpandedRows([]);
     
     setTimeout(() => {
-      // Pull the real proofs from the database based on the selected Madhab!
+      // 1. Fetch the exact proofs from our database
       const husbandProof = proofsDatabase.husband.quarter_share;
       const sonProof = proofsDatabase.sons.asabah;
 
+      // 2. Map them to the UI
       setResults([
         { 
           name: 'Husband', 
@@ -91,6 +81,7 @@ export default function AlRahbiyyahDashboard() {
           amount: netEstate * 0.25, 
           rule: husbandProof.ruleTitle,
           quranProof: husbandProof.quran,
+          // This line dynamically pulls Maliki, Hanafi, etc., based on what the user selected!
           madhabProof: husbandProof.madhab[madhab as keyof typeof husbandProof.madhab] 
         },
         { 
@@ -314,11 +305,7 @@ export default function AlRahbiyyahDashboard() {
                     const isExpanded = expandedRows.includes(idx);
                     return (
                       <React.Fragment key={idx}>
-                        {/* MAIN ROW */}
-                        <tr 
-                          onClick={() => toggleRow(idx)} 
-                          className={`hover:bg-slate-800/30 transition-colors cursor-pointer group ${isExpanded ? 'bg-slate-800/20' : ''}`}
-                        >
+                        <tr onClick={() => toggleRow(idx)} className={`hover:bg-slate-800/30 transition-colors cursor-pointer group ${isExpanded ? 'bg-slate-800/20' : ''}`}>
                           <td className="p-4">
                             <span className="font-bold text-white text-lg block">{heir.name}</span>
                             <span className="text-xs text-slate-500">{heir.rule}</span>
@@ -335,13 +322,11 @@ export default function AlRahbiyyahDashboard() {
                           </td>
                         </tr>
                         
-                        {/* DUAL PROOF EXPANDABLE ROW */}
                         {isExpanded && (
                           <tr className="bg-[#030610]">
                             <td colSpan={5} className="p-0">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 m-4 animate-in slide-in-from-top-2 duration-300">
                                 
-                                {/* 1. The Divine Text (Qur'an/Sunnah) */}
                                 <div className="p-6 border-l-2 border-yellow-600 bg-gradient-to-r from-yellow-900/10 to-transparent rounded-r-xl shadow-inner">
                                   <div className="flex items-center gap-2 mb-4">
                                     <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -356,7 +341,6 @@ export default function AlRahbiyyahDashboard() {
                                   </div>
                                 </div>
 
-                                {/* 2. The Madhab Text */}
                                 <div className="p-6 border-l-2 border-emerald-600 bg-gradient-to-r from-emerald-900/10 to-transparent rounded-r-xl shadow-inner">
                                   <div className="flex items-center gap-2 mb-4">
                                     <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
