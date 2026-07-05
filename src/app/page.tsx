@@ -31,11 +31,6 @@ export default function LandingPage() {
             >
               Calculate Your Estate Now — 100% Free
             </Link>
-            
-            <button className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-300 bg-slate-800/50 rounded-full hover:bg-slate-700/50 hover:text-white transition-all duration-300 border border-slate-700 backdrop-blur-sm">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-              Share Platform
-            </button>
           </div>
         </div>
       </section>
@@ -66,55 +61,102 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* --- FEATURE GRID: THE LAST BORN --- */}
+      {/* --- FEATURE GRID --- */}
       <section className="py-24 relative z-10 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-16">
+          <div className="mb-16 text-center md:text-left">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Engineered for Precision.</h2>
             <p className="text-slate-400 text-lg max-w-2xl">
-              Advanced feature sets that generic calculators completely lack. Designed to handle the most complex family structures flawlessly.
+              Advanced feature sets that generic calculators completely lack.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Feature 1 */}
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-lg bg-blue-900/50 flex items-center justify-center text-blue-400 mb-6 border border-blue-700/50">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">The Verse-to-Variable Engine</h3>
-              <p className="text-slate-400 leading-relaxed">Instantly view the exact classical Arabic verse and English translation that justifies every single decimal split in your calculation.</p>
+              <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-blue-400 mr-3">❖</span> The Verse-to-Variable Engine</h3>
+              <p className="text-slate-400 leading-relaxed">Instantly view the exact classical Arabic verse and English translation that justifies every single decimal split.</p>
             </div>
-
-            {/* Feature 2 */}
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-lg bg-emerald-900/50 flex items-center justify-center text-emerald-400 mb-6 border border-emerald-700/50">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Unborn Foetus Escrow System</h3>
-              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your selected school's unique rules.</p>
+              <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-emerald-400 mr-3">❖</span> Unborn Foetus Escrow System</h3>
+              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school's unique rules.</p>
             </div>
-
-            {/* Feature 3 */}
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-lg bg-yellow-900/50 flex items-center justify-center text-yellow-400 mb-6 border border-yellow-700/50">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">Modern Asset Integration</h3>
-              <p className="text-slate-400 leading-relaxed">Seamlessly factor in modern financial instruments including digital assets, real estate mortgages, and corporate stock options.</p>
+              <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-yellow-400 mr-3">❖</span> Modern Asset Integration</h3>
+              <p className="text-slate-400 leading-relaxed">Seamlessly factor in digital assets, real estate mortgages, and corporate stock options.</p>
             </div>
-
-            {/* Feature 4 */}
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-lg bg-purple-900/50 flex items-center justify-center text-purple-400 mb-6 border border-purple-700/50">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">The Pre-Distribution Sequencer</h3>
-              <p className="text-slate-400 leading-relaxed">Automatically deduct funeral costs, outstanding debts, and documented Wasiyyah (up to 1/3) before calculating final inheritance shares.</p>
+              <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-purple-400 mr-3">❖</span> The Pre-Distribution Sequencer</h3>
+              <p className="text-slate-400 leading-relaxed">Automatically deduct funeral costs and outstanding debts before calculating final inheritance shares.</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* --- DUAL-AUDIENCE PORTAL --- */}
+      <section className="py-20 bg-[#0a1128] border-y border-slate-800/50 relative z-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-[#060b19] border border-slate-700 rounded-2xl p-10 text-center flex flex-col items-center">
+              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-6 text-2xl">👨‍👩‍👧‍👦</div>
+              <h3 className="text-2xl font-bold text-white mb-4">For the Public</h3>
+              <p className="text-slate-400 mb-8">Protect Your Family. Generate a bulletproof, Shariah-compliant Islamic Will (Wasiyyah) recognized by local probate courts in minutes.</p>
+              <Link href="/calculator" className="mt-auto px-6 py-3 border border-emerald-500 text-emerald-400 rounded-full hover:bg-emerald-900/30 transition-colors w-full font-semibold">Start Family Plan</Link>
+            </div>
+            
+            <div className="bg-[#060b19] border border-yellow-700/50 rounded-2xl p-10 text-center flex flex-col items-center shadow-[0_0_30px_rgba(202,138,4,0.05)]">
+              <div className="w-16 h-16 bg-yellow-900/30 border border-yellow-700/50 rounded-full flex items-center justify-center mb-6 text-2xl">⚖️</div>
+              <h3 className="text-2xl font-bold text-yellow-500 mb-4">For Specialists</h3>
+              <p className="text-slate-400 mb-8">For Imams, Lawyers, and Scholars. Access multi-client dashboards, cross-school mathematical overrides, and deep academic PDF reporting.</p>
+              <Link href="/calculator" className="mt-auto px-6 py-3 bg-yellow-600 text-black rounded-full hover:bg-yellow-500 transition-colors w-full font-bold">Access Pro Tools</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- TRUST & PRIVACY BADGES --- */}
+      <section className="py-16 relative z-10 px-4">
+        <div className="max-w-4xl mx-auto bg-slate-900/80 border border-slate-700 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <svg className="w-10 h-10 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            <div>
+              <h4 className="text-white font-bold">Certified Accuracy</h4>
+              <p className="text-sm text-slate-400">Mathematical algorithms verified by Muftis and Estate Attorneys.</p>
+            </div>
+          </div>
+          <div className="w-px h-12 bg-slate-700 hidden md:block"></div>
+          <div className="flex items-center gap-4">
+            <svg className="w-10 h-10 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <div>
+              <h4 className="text-white font-bold">Bank-Grade Privacy</h4>
+              <p className="text-sm text-slate-400">Your data is encrypted. We do not store sensitive asset structures on public servers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOOTER & PRICING TEASER --- */}
+      <footer className="border-t border-slate-800 bg-[#030610] pt-12 pb-8 px-4 text-center">
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
+          <h2 className="text-2xl font-bold text-white mb-2">Transparent Access</h2>
+          <p className="text-slate-400 mb-8 max-w-lg">
+            The core multi-madhab calculator is <strong className="text-emerald-400">100% free forever</strong>. Advanced features, including court-ready legal Will PDF exports, unlock via a simple premium checkout.
+          </p>
+          
+          <div className="flex gap-4 mb-12">
+            <Link href="/calculator" className="px-8 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">
+              Start Free Core
+            </Link>
+            <button className="px-8 py-3 flex items-center bg-yellow-600/10 text-yellow-500 font-semibold rounded-lg hover:bg-yellow-600/20 transition-colors border border-yellow-600/30">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+              Share Platform
+            </button>
+          </div>
+          
+          <p className="text-sm text-slate-600">
+            © {new Date().getFullYear()} Almahmudiyyah Press. All rights reserved. <br/> Built as the digital companion to The Islamic Estate Blueprint.
+          </p>
+        </div>
+      </footer>
 
     </main>
   );
