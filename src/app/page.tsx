@@ -1,6 +1,8 @@
 "use client";
 
 import Link from 'next/link';
+// IMPORTING YOUR NEW REVIEW SECTION
+import ReviewsSection from '../components/ReviewsSection';
 
 export default function LandingPage() {
   
@@ -43,8 +45,9 @@ export default function LandingPage() {
             Islamic Inheritance <span className="text-3xl md:text-5xl text-yellow-600/80">& Estate Planning</span>.
           </h1>
 
+          {/* FIXED: world's -> world&apos;s and Fara'id -> Fara&apos;id */}
           <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-10 leading-relaxed">
-            The world's first smart Fara'id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
+            The world&apos;s first smart Fara&apos;id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full justify-center">
@@ -110,7 +113,8 @@ export default function LandingPage() {
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-emerald-400 mr-3">❖</span> Unborn Foetus Escrow System</h3>
-              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school's unique rules.</p>
+              {/* FIXED: school's -> school&apos;s */}
+              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school&apos;s unique rules.</p>
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-yellow-400 mr-3">❖</span> Modern Asset Integration</h3>
@@ -165,6 +169,10 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* --- REVIEWS SECTION PLACEMENT --- */}
+      {/* This renders the Reviews component right before the footer! */}
+      <ReviewsSection />
 
       {/* --- FOOTER & PRICING TEASER --- */}
       <footer className="border-t border-slate-800 bg-[#030610] pt-12 pb-8 px-4 text-center">
