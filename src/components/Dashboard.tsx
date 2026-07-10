@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
+import dynamic from 'next/dynamic';
+
+const PaystackButton = dynamic(
+  () => import('react-paystack').then((mod) => mod.PaystackButton as any),
+  { ssr: false }
+);
 
 export default function AlRahbiyyahDashboard() {
   const [heirs, setHeirs] = useState({
@@ -16,6 +22,21 @@ export default function AlRahbiyyahDashboard() {
   const [results, setResults] = useState<any>(null); 
   const [isCalculating, setIsCalculating] = useState(false);
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [donationAmount, setDonationAmount] = useState<number>(1000);
+  const [donationEmail, setDonationEmail] = useState<string>('');
+
+  const onSuccess = (reference: any) => {
+    alert(`Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference}`);
+    setShowDonationModal(false);
+    setDonationAmount(1000);
+    setDonationEmail('');
+  };
+
+  const onClose = () => {
+    console.log("Paystack window closed by user.");
+  };
 
   const gross = parseFloat(finances.grossEstate) || 0;
   const funeral = parseFloat(finances.funeralCosts) || 0;
@@ -53,7 +74,6 @@ export default function AlRahbiyyahDashboard() {
     }
   };
 
-  // --- THE REAL ENGINE TRIGGER ---
   const handleCalculate = () => {
     setIsCalculating(true);
     setExpandedRows([]);
@@ -64,7 +84,6 @@ export default function AlRahbiyyahDashboard() {
     }, 600);
   };
 
-  // --- THE RESET BUTTON LOGIC ---
   const handleReset = () => {
     setHeirs({
       husband: 0, wives: 0, sons: 0, daughters: 0, grandsons: 0, granddaughters: 0,
@@ -74,6 +93,11 @@ export default function AlRahbiyyahDashboard() {
     setFinances({ grossEstate: '', funeralCosts: '', debts: '', wasiyyah: '' });
     setResults(null);
     setExpandedRows([]);
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert("Account Number Copied!");
   };
 
   const HeirCounter = ({ name, label, max = 99 }: { name: string, label: string, max?: number }) => (
@@ -220,7 +244,7 @@ export default function AlRahbiyyahDashboard() {
       </div>
 
       {/* --- EXECUTION & RESET BUTTONS --- */}
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 py-6">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 py-6 flex-wrap">
         <button 
           onClick={handleCalculate} 
           disabled={isCalculating || netEstate <= 0} 
@@ -234,6 +258,14 @@ export default function AlRahbiyyahDashboard() {
           className="px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 border border-red-900/50 bg-red-950/30 text-red-400 hover:bg-red-900/50 hover:text-white"
         >
           Reset All Data
+        </button>
+
+        <button 
+          onClick={() => setShowDonationModal(true)}
+          className="px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 border border-yellow-500/50 bg-yellow-900/20 text-yellow-400 hover:bg-yellow-500 hover:text-black flex items-center gap-2 shadow-[0_0_15px_rgba(202,138,4,0.1)]"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+          Donate Fisabilillah
         </button>
       </div>
 
@@ -337,6 +369,95 @@ export default function AlRahbiyyahDashboard() {
           </div>
         </div>
       )}
+
+      {/* --- DONATION MODAL --- */}
+      {showDonationModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          {/* THE FIX IS HERE: overflow-y-auto and max-h-[90vh] added below */}
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh] relative">
+            <button onClick={() => setShowDonationModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div className="bg-gradient-to-br from-yellow-900/30 to-slate-900 p-8 text-center border-b border-slate-800">
+              <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/30">
+                <svg className="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Support Al-Rahbiyyah Pro</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Your Sadaqah ensures this complex Shariah ecosystem remains 100% free for the Ummah. Choose your preferred way to support.
+              </p>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Option 1: Bank Transfer */}
+              <div className="bg-slate-950 border border-emerald-900/50 rounded-xl p-5 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                <h4 className="text-emerald-400 font-bold mb-4 flex items-center text-sm uppercase tracking-wider">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                  Option 1: Direct Bank Transfer
+                </h4>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500">Bank Name:</span>
+                    <span className="text-white font-semibold">Jaiz Bank Plc</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500">Account Name:</span>
+                    <span className="text-white font-semibold">Almahmudiyyah Press</span>
+                  </div>
+                  <div className="flex justify-between text-sm items-center">
+                    <span className="text-slate-500">Account No:</span>
+                    {/* DON'T FORGET TO ADD YOUR REAL ACCOUNT NUMBER HERE LATER */}
+                    <span className="text-yellow-400 font-bold text-lg">0123456789</span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => copyToClipboard('0123456789')} 
+                  className="w-full py-2 bg-emerald-900/30 text-emerald-400 font-medium rounded-lg hover:bg-emerald-800/40 transition-colors border border-emerald-800/50 flex justify-center items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  Copy Account Number
+                </button>
+              </div>
+
+              <div className="relative flex items-center justify-center">
+                <div className="border-t border-slate-800 w-full absolute"></div>
+                <span className="bg-slate-900 px-4 text-xs text-slate-500 relative z-10 uppercase font-bold">Or</span>
+              </div>
+
+              {/* Option 2: Paystack Gateway Integration (SSR-SAFE) */}
+              <div>
+                <h4 className="text-blue-400 font-bold mb-3 flex items-center text-sm uppercase tracking-wider">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                  Option 2: Secure Online Payment
+                </h4>
+                
+                <div className="space-y-3 mb-4">
+                  <input type="email" placeholder="Your Email Address (Optional)" value={donationEmail} onChange={e => setDonationEmail(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" />
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₦</span>
+                    <input type="number" placeholder="Amount" value={donationAmount} onChange={e => setDonationAmount(Number(e.target.value))} className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+
+                <PaystackButton
+                  email={donationEmail || "donor@alrahbiyyah.com"}
+                  amount={Math.max(100, donationAmount) * 100}
+                  publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_YOUR_PAYSTACK_PUBLIC_KEY'}
+                  text={`Donate ₦${Math.max(100, donationAmount)} Securely`}
+                  onSuccess={onSuccess}
+                  onClose={onClose}
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] flex justify-center items-center gap-2 mb-4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

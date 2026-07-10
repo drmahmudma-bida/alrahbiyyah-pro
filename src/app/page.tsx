@@ -1,12 +1,32 @@
 "use client";
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-// IMPORTING YOUR NEW REVIEW SECTION
 import ReviewsSection from '../components/ReviewsSection';
+import dynamic from 'next/dynamic';
+
+const PaystackButton = dynamic(
+  () => import('react-paystack').then((mod) => mod.PaystackButton as any),
+  { ssr: false }
+);
 
 export default function LandingPage() {
   
-  // The magic function that handles mobile sharing or desktop copying
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [donationAmount, setDonationAmount] = useState<number>(1000);
+  const [donationEmail, setDonationEmail] = useState<string>('');
+
+  const onSuccess = (reference: any) => {
+    alert(`Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference}`);
+    setShowDonationModal(false);
+    setDonationAmount(1000);
+    setDonationEmail('');
+  };
+
+  const onClose = () => {
+    console.log("Paystack window closed by user.");
+  };
+
   const handleShare = async () => {
     const shareData = {
       title: 'Al-Rahbiyyah Pro',
@@ -24,6 +44,11 @@ export default function LandingPage() {
       navigator.clipboard.writeText(shareData.url);
       alert('Link copied to clipboard! You can now paste and share it anywhere.');
     }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    alert("Account Number Copied!");
   };
 
   return (
@@ -45,7 +70,6 @@ export default function LandingPage() {
             Islamic Inheritance <span className="text-3xl md:text-5xl text-yellow-600/80">& Estate Planning</span>.
           </h1>
 
-          {/* FIXED: world's -> world&apos;s and Fara'id -> Fara&apos;id */}
           <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-10 leading-relaxed">
             The world&apos;s first smart Fara&apos;id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
           </p>
@@ -58,7 +82,6 @@ export default function LandingPage() {
               Calculate Inheritance Shares Now — 100% Free
             </Link>
             
-            {/* ACTIVATED HERO SHARE BUTTON */}
             <button 
               onClick={handleShare}
               className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-300 bg-slate-800/50 rounded-full hover:bg-slate-700/50 hover:text-white transition-all duration-300 border border-slate-700 backdrop-blur-sm cursor-pointer"
@@ -113,7 +136,6 @@ export default function LandingPage() {
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-emerald-400 mr-3">❖</span> Unborn Foetus Escrow System</h3>
-              {/* FIXED: school's -> school&apos;s */}
               <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school&apos;s unique rules.</p>
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
@@ -170,8 +192,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* --- REVIEWS SECTION PLACEMENT --- */}
-      {/* This renders the Reviews component right before the footer! */}
       <ReviewsSection />
 
       {/* --- FOOTER & PRICING TEASER --- */}
@@ -182,18 +202,25 @@ export default function LandingPage() {
             The core multi-madhab calculator is <strong className="text-emerald-400">100% free forever</strong>. Advanced features, including court-ready legal Will PDF exports, unlock via a simple premium checkout.
           </p>
           
-          <div className="flex gap-4 mb-12">
-            <Link href="/calculator" className="px-8 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">
+          <div className="flex flex-col sm:flex-row gap-4 mb-12 w-full justify-center items-center">
+            <Link href="/calculator" className="px-8 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 w-full sm:w-auto text-center">
               Start Free Core
             </Link>
             
-            {/* ACTIVATED FOOTER SHARE BUTTON */}
             <button 
               onClick={handleShare}
-              className="px-8 py-3 flex items-center bg-yellow-600/10 text-yellow-500 font-semibold rounded-lg hover:bg-yellow-600/20 transition-colors border border-yellow-600/30 cursor-pointer"
+              className="px-8 py-3 flex justify-center items-center bg-slate-800/50 text-slate-300 font-semibold rounded-lg hover:bg-slate-700/50 hover:text-white transition-colors border border-slate-700 cursor-pointer w-full sm:w-auto"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
               Share Platform
+            </button>
+
+            <button 
+              onClick={() => setShowDonationModal(true)}
+              className="px-8 py-3 flex justify-center items-center bg-yellow-600/10 text-yellow-500 font-bold rounded-lg hover:bg-yellow-600 hover:text-black transition-all border border-yellow-600/30 shadow-[0_0_15px_rgba(202,138,4,0.1)] w-full sm:w-auto"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              Donate Fisabilillah
             </button>
           </div>
           
@@ -202,6 +229,93 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+
+      {/* --- DONATION MODAL --- */}
+      {showDonationModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          {/* THE FIX IS HERE: overflow-y-auto and max-h-[90vh] added below */}
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh] relative">
+            <button onClick={() => setShowDonationModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div className="bg-gradient-to-br from-yellow-900/30 to-slate-900 p-8 text-center border-b border-slate-800">
+              <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/30">
+                <svg className="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Support Al-Rahbiyyah Pro</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Your Sadaqah ensures this complex Shariah ecosystem remains 100% free for the Ummah. Choose your preferred way to support.
+              </p>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Option 1: Bank Transfer */}
+              <div className="bg-slate-950 border border-emerald-900/50 rounded-xl p-5 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                <h4 className="text-emerald-400 font-bold mb-4 flex items-center text-sm uppercase tracking-wider">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                  Option 1: Direct Bank Transfer
+                </h4>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500">Bank Name:</span>
+                    <span className="text-white font-semibold">Jaiz Bank Plc</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-500">Account Name:</span>
+                    <span className="text-white font-semibold">Almahmudiyyah Press</span>
+                  </div>
+                  <div className="flex justify-between text-sm items-center">
+                    <span className="text-slate-500">Account No:</span>
+                    <span className="text-yellow-400 font-bold text-lg">0123456789</span>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => copyToClipboard('0123456789')} 
+                  className="w-full py-2 bg-emerald-900/30 text-emerald-400 font-medium rounded-lg hover:bg-emerald-800/40 transition-colors border border-emerald-800/50 flex justify-center items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                  Copy Account Number
+                </button>
+              </div>
+
+              <div className="relative flex items-center justify-center">
+                <div className="border-t border-slate-800 w-full absolute"></div>
+                <span className="bg-slate-900 px-4 text-xs text-slate-500 relative z-10 uppercase font-bold">Or</span>
+              </div>
+
+              {/* Option 2: Paystack Gateway Integration (SSR-SAFE) */}
+              <div>
+                <h4 className="text-blue-400 font-bold mb-3 flex items-center text-sm uppercase tracking-wider">
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                  Option 2: Secure Online Payment
+                </h4>
+                
+                <div className="space-y-3 mb-4">
+                  <input type="email" placeholder="Your Email Address (Optional)" value={donationEmail} onChange={e => setDonationEmail(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" />
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₦</span>
+                    <input type="number" placeholder="Amount" value={donationAmount} onChange={e => setDonationAmount(Number(e.target.value))} className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+
+                <PaystackButton
+                  email={donationEmail || "donor@alrahbiyyah.com"}
+                  amount={Math.max(100, donationAmount) * 100}
+                  publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_YOUR_PAYSTACK_PUBLIC_KEY'}
+                  text={`Donate ₦${Math.max(100, donationAmount)} Securely`}
+                  onSuccess={onSuccess}
+                  onClose={onClose}
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] flex justify-center items-center gap-2 mb-4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </main>
   );
