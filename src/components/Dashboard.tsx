@@ -18,7 +18,6 @@ export default function AlRahbiyyahDashboard() {
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const [showDonationModal, setShowDonationModal] = useState(false);
 
-  // --- THE NEW NATIVE PDF ENGINE ---
   const exportPDF = () => {
     window.print();
   };
@@ -86,26 +85,26 @@ export default function AlRahbiyyahDashboard() {
   };
 
   const HeirCounter = ({ name, label, max = 99 }: { name: string, label: string, max?: number }) => (
-    <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors print:border-none print:bg-transparent print:p-1">
-      <span className="text-slate-300 font-medium print:text-black">{label}</span>
+    <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors">
+      <span className="text-slate-300 font-medium">{label}</span>
       <div className="flex items-center gap-3">
-        <button onClick={() => updateHeir(name, -1)} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors print:hidden">-</button>
-        <span className="w-4 text-center text-white font-bold print:text-black">{heirs[name as keyof typeof heirs]}</span>
-        <button onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }} className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors print:hidden">+</button>
+        <button onClick={() => updateHeir(name, -1)} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors">-</button>
+        <span className="w-4 text-center text-white font-bold">{heirs[name as keyof typeof heirs]}</span>
+        <button onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }} className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors">+</button>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-24 print:p-0 print:space-y-4">
+    <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-24 print:p-0 print:space-y-0">
       
-      {/* Global Print Styles to make the PDF look like a clean white document */}
+      {/* Global Print Styles for High-End Document Look */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          body { background-color: white !important; color: black !important; }
+          body { background-color: white !important; color: #0f172a !important; }
           .print-hide { display: none !important; }
-          .print-text-black { color: black !important; }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          @page { size: A4 portrait; margin: 12mm; }
         }
       `}} />
 
@@ -166,6 +165,19 @@ export default function AlRahbiyyahDashboard() {
                    Shariah Cap: Max 1/3 allowed is {currency}{wasiyyahMaxLimit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                  </p>
               )}
+            </div>
+          </div>
+
+          <div className="bg-[#030610] border border-emerald-900/50 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center relative z-10 shadow-2xl">
+            <div className="mb-4 md:mb-0">
+              <h3 className="text-slate-300 font-bold text-lg mb-1">Final Net Estate (Tarikah)</h3>
+              <p className="text-sm text-emerald-400/80">Available for Fara'id division.</p>
+            </div>
+            <div className="text-right flex items-center justify-end">
+              <span className="text-2xl text-emerald-500 mr-2 font-bold">{currency}</span>
+              <span className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
+                {netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
             </div>
           </div>
         </div>
@@ -250,43 +262,69 @@ export default function AlRahbiyyahDashboard() {
 
       {/* --- RESULTS DISPLAY TERMINAL (THIS IS WHAT PRINTS) --- */}
       {results && (
-        <div className="bg-[#030610] print:bg-white border border-yellow-600/50 print:border-slate-300 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] print:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 print:mt-0">
+        <div className="bg-[#030610] print:bg-white border border-yellow-600/50 print:border-slate-300 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] print:shadow-none overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 print:mt-0 print:border-none">
           
-          {/* Header visible ONLY on print to show the context of the report */}
-          <div className="hidden print:block p-8 border-b border-slate-200 bg-white">
-            <h1 className="text-3xl font-extrabold text-black mb-2">Al-Rahbiyyah Pro: Official Fara'id Report</h1>
-            <p className="text-slate-600 font-medium mb-4">The Final Word in Islamic Inheritance & Estate Planning</p>
-            <div className="grid grid-cols-2 gap-4 text-sm text-slate-800">
-              <div><strong>Jurisprudence:</strong> {madhab.charAt(0).toUpperCase() + madhab.slice(1)} School ({getMadhabBookName()})</div>
-              <div><strong>Date Generated:</strong> {new Date().toLocaleDateString()}</div>
-              <div><strong>Gross Estate:</strong> {currency}{gross.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-              <div><strong>Final Tarikah (Net):</strong> {currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+          {/* --- BEAUTIFUL PRINT-ONLY HEADER --- */}
+          <div className="hidden print:block pt-4 pb-8 border-b-4 border-slate-900 mb-8">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight uppercase mb-1">Al-Rahbiyyah Pro</h1>
+                <p className="text-yellow-600 font-bold text-lg tracking-widest uppercase bg-yellow-50 inline-block px-3 py-1 rounded-md border border-yellow-200">Official Fara'id Distribution Report</p>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-slate-500 uppercase font-bold tracking-widest mb-1">Date of Issue</div>
+                <div className="text-lg font-bold text-slate-900 bg-slate-100 px-4 py-2 rounded-lg border border-slate-200">
+                  {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-6 bg-slate-50 rounded-xl border border-slate-200 p-6 shadow-sm">
+              <div className="border-r border-slate-200 pr-6">
+                <span className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500"></span> Jurisprudence
+                </span>
+                <span className="block text-xl font-bold text-slate-900">{madhab.charAt(0).toUpperCase() + madhab.slice(1)} School</span>
+                <span className="block text-sm text-slate-600 font-medium italic mt-1">{getMadhabBookName()}</span>
+              </div>
+              <div className="border-r border-slate-200 px-6">
+                 <span className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                   <span className="w-2 h-2 rounded-full bg-slate-400"></span> Gross Estate
+                 </span>
+                 <span className="block text-2xl font-bold text-slate-700">{currency}{gross.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              </div>
+              <div className="pl-6">
+                 <span className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Net Tarikah
+                 </span>
+                 <span className="block text-3xl font-extrabold text-emerald-700">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              </div>
             </div>
           </div>
+          {/* --- END PRINT HEADER --- */}
 
-          <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] print:bg-white print:bg-none border-b border-slate-800 print:border-slate-200 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
+          <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] border-b border-slate-800 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
             <div className="text-center md:text-left">
-              <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600 print-text-black">Final Shariah Distribution</h2>
-              <p className="text-slate-400 print-text-black mt-1">Verified mathematically via the {madhab.charAt(0).toUpperCase() + madhab.slice(1)} School.</p>
+              <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">Final Shariah Distribution</h2>
+              <p className="text-slate-400 mt-1">Verified mathematically via the {madhab.charAt(0).toUpperCase() + madhab.slice(1)} School.</p>
             </div>
-            
-            <div className="flex items-center gap-6 bg-slate-950/50 print:bg-transparent px-6 py-3 rounded-xl border border-slate-800/80 print:border-none">
+            <div className="flex items-center gap-6 bg-slate-950/50 px-6 py-3 rounded-xl border border-slate-800/80">
               <div className="text-right">
-                <span className="text-xs text-slate-500 print:text-black uppercase tracking-widest block mb-1">Total Tarikah Distributed</span>
-                <span className="text-2xl font-bold text-emerald-400 print-text-black">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span className="text-xs text-slate-500 uppercase tracking-widest block mb-1">Total Tarikah Distributed</span>
+                <span className="text-2xl font-bold text-emerald-400">{currency}{netEstate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
           </div>
 
           <div className="p-0 md:p-4 print:p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse print:text-sm">
+            <div className="overflow-x-auto print:overflow-visible">
+              <table className="w-full text-left border-collapse print:border print:border-slate-300 print:rounded-xl print:overflow-hidden">
                 <thead>
-                  <tr className="text-slate-500 print-text-black text-xs uppercase tracking-widest bg-slate-900/50 print:bg-slate-100 border-b border-slate-800 print:border-slate-300">
-                    <th className="p-4 font-semibold">Surviving Heir</th>
-                    <th className="p-4 font-semibold">Fraction</th>
-                    <th className="p-4 font-semibold">Percentage</th>
-                    <th className="p-4 font-semibold text-right">Monetary Payout</th>
+                  <tr className="text-slate-500 text-xs uppercase tracking-widest bg-slate-900/50 border-b border-slate-800 print:bg-slate-900 print:text-white print:border-none">
+                    <th className="p-4 print:py-4 font-semibold print:font-bold">Surviving Heir</th>
+                    <th className="p-4 print:py-4 font-semibold print:font-bold">Fraction</th>
+                    <th className="p-4 print:py-4 font-semibold print:font-bold">Percentage</th>
+                    <th className="p-4 print:py-4 font-semibold print:font-bold text-right">Monetary Payout</th>
                     <th className="p-4 font-semibold text-center print:hidden">Proofs</th>
                   </tr>
                 </thead>
@@ -302,13 +340,13 @@ export default function AlRahbiyyahDashboard() {
                     return (
                       <React.Fragment key={idx}>
                         <tr onClick={() => toggleRow(idx)} className={`hover:bg-slate-800/30 print:hover:bg-transparent transition-colors cursor-pointer print:cursor-default group ${isExpanded ? 'bg-slate-800/20 print:bg-transparent' : ''}`}>
-                          <td className="p-4 print:py-2">
-                            <span className="font-bold text-white print-text-black text-lg print:text-base block">{heir.name}</span>
-                            <span className="text-xs text-slate-500 print:text-slate-700">{heir.rule}</span>
+                          <td className="p-4 print:py-5 print:pl-6">
+                            <span className="font-bold text-white print:text-slate-900 text-lg print:text-xl block">{heir.name}</span>
+                            <span className="text-xs text-slate-500 print:text-slate-500 font-medium mt-1 inline-block">{heir.rule}</span>
                           </td>
-                          <td className="p-4 print:py-2 font-mono text-yellow-500 print-text-black text-xl print:text-base">{heir.fraction}</td>
-                          <td className="p-4 print:py-2 text-slate-300 print-text-black font-semibold">{heir.percentage}%</td>
-                          <td className="p-4 print:py-2 text-right font-bold text-emerald-400 print-text-black text-xl print:text-base">{currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                          <td className="p-4 font-mono text-yellow-500 print:text-slate-800 text-xl font-bold">{heir.fraction}</td>
+                          <td className="p-4 text-slate-300 print:text-slate-600 font-semibold">{heir.percentage}%</td>
+                          <td className="p-4 text-right font-bold text-emerald-400 print:text-emerald-700 text-xl print:text-2xl print:pr-6">{currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                           <td className="p-4 text-center print:hidden">
                             {heir.name !== 'Error' && (
                               <button className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto transition-all ${isExpanded ? 'bg-yellow-600 text-black rotate-180' : 'bg-slate-800 text-yellow-500 group-hover:bg-slate-700'}`}>
@@ -319,33 +357,35 @@ export default function AlRahbiyyahDashboard() {
                         </tr>
                         
                         {(isExpanded || (showProof && heir.name !== 'Error')) && (
-                          <tr className="bg-[#030610] print:bg-white print:break-inside-avoid">
+                          <tr className="bg-[#030610] print:bg-white print:border-t-0">
                             <td colSpan={5} className="p-0">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 m-4 print:m-0 print:p-2 print:gap-2 animate-in slide-in-from-top-2 duration-300">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 m-4 print:m-0 print:px-6 print:pb-6 print:pt-0 animate-in slide-in-from-top-2 duration-300">
                                 
-                                <div className="p-6 print:p-4 border-l-2 border-yellow-600 print:border-slate-400 bg-gradient-to-r from-yellow-900/10 to-transparent print:bg-none rounded-r-xl shadow-inner print:shadow-none">
-                                  <div className="flex items-center gap-2 mb-4 print:mb-2">
-                                    <span className="text-yellow-500 print-text-black font-bold uppercase tracking-widest text-xs">Divine Proof (Qur'an/Sunnah)</span>
+                                {/* PRINT STYLED QURAN BOX */}
+                                <div className="p-6 border-l-2 border-yellow-600 print:border-l-4 print:border-yellow-500 bg-gradient-to-r from-yellow-900/10 to-transparent print:bg-slate-50 rounded-r-xl print:rounded-xl shadow-inner print:shadow-sm">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <span className="text-yellow-500 print:text-yellow-700 font-bold uppercase tracking-widest text-xs">Divine Proof (Qur'an/Sunnah)</span>
                                   </div>
-                                  <div className="text-right mb-4 print:mb-2">
-                                    <p className="text-2xl print:text-base text-yellow-400 print-text-black font-bold leading-relaxed" dir="rtl">{quranProof.arabic ? `"${quranProof.arabic}"` : ""}</p>
+                                  <div className="text-right mb-4">
+                                    <p className="text-2xl print:text-xl text-yellow-400 print:text-slate-900 font-bold leading-relaxed" dir="rtl">{quranProof.arabic ? `"${quranProof.arabic}"` : ""}</p>
                                   </div>
                                   <div>
-                                    <p className="text-slate-300 print:text-slate-800 italic text-sm border-l-2 border-slate-700 print:border-slate-300 pl-4 py-1">{quranProof.translation}</p>
-                                    <div className="mt-3 print:mt-1 inline-block px-3 py-1 bg-slate-800 print:bg-slate-100 text-yellow-500 print-text-black text-xs font-semibold rounded-md border border-slate-700 print:border-slate-300">Ref: {quranProof.reference}</div>
+                                    <p className="text-slate-300 print:text-slate-700 italic text-sm border-l-2 border-slate-700 print:border-slate-300 pl-4 py-1">{quranProof.translation}</p>
+                                    <div className="mt-3 inline-block px-3 py-1 bg-slate-800 print:bg-white text-yellow-500 print:text-slate-500 text-xs font-semibold rounded-md border border-slate-700 print:border-slate-200">Ref: {quranProof.reference}</div>
                                   </div>
                                 </div>
 
-                                <div className="p-6 print:p-4 border-l-2 border-emerald-600 print:border-slate-400 bg-gradient-to-r from-emerald-900/10 to-transparent print:bg-none rounded-r-xl shadow-inner print:shadow-none">
-                                  <div className="flex items-center gap-2 mb-4 print:mb-2">
-                                    <span className="text-emerald-500 print-text-black font-bold uppercase tracking-widest text-xs">Juristic Text ({getMadhabBookName()})</span>
+                                {/* PRINT STYLED MADHAB BOX */}
+                                <div className="p-6 border-l-2 border-emerald-600 print:border-l-4 print:border-emerald-600 bg-gradient-to-r from-emerald-900/10 to-transparent print:bg-emerald-50/50 rounded-r-xl print:rounded-xl shadow-inner print:shadow-sm">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <span className="text-emerald-500 print:text-emerald-700 font-bold uppercase tracking-widest text-xs">Juristic Text ({getMadhabBookName()})</span>
                                   </div>
-                                  <div className="text-right mb-4 print:mb-2">
-                                    <p className="text-2xl print:text-base text-emerald-400 print-text-black font-bold leading-relaxed" dir="rtl">{madhabProof.arabic ? `"${madhabProof.arabic}"` : ""}</p>
+                                  <div className="text-right mb-4">
+                                    <p className="text-2xl print:text-xl text-emerald-400 print:text-slate-900 font-bold leading-relaxed" dir="rtl">{madhabProof.arabic ? `"${madhabProof.arabic}"` : ""}</p>
                                   </div>
                                   <div>
-                                    <p className="text-slate-300 print:text-slate-800 italic text-sm border-l-2 border-slate-700 print:border-slate-300 pl-4 py-1">{madhabProof.translation}</p>
-                                    <div className="mt-3 print:mt-1 inline-block px-3 py-1 bg-slate-800 print:bg-slate-100 text-emerald-500 print-text-black text-xs font-semibold rounded-md border border-slate-700 print:border-slate-300">Ref: {madhabProof.reference}</div>
+                                    <p className="text-slate-300 print:text-slate-700 italic text-sm border-l-2 border-slate-700 print:border-emerald-200 pl-4 py-1">{madhabProof.translation}</p>
+                                    <div className="mt-3 inline-block px-3 py-1 bg-slate-800 print:bg-white text-emerald-500 print:text-emerald-700 text-xs font-semibold rounded-md border border-slate-700 print:border-emerald-200">Ref: {madhabProof.reference}</div>
                                   </div>
                                 </div>
 
@@ -360,8 +400,13 @@ export default function AlRahbiyyahDashboard() {
               </table>
             </div>
             
-            <div className="hidden print:block text-center text-xs text-slate-500 mt-8 border-t border-slate-200 pt-4">
-              Generated securely by Al-Rahbiyyah Pro | www.alrahbiyyah.com
+            {/* --- PRINT ONLY FOOTER --- */}
+            <div className="hidden print:block mt-12 pt-6 border-t-2 border-slate-200">
+              <div className="flex justify-between items-center text-sm text-slate-500">
+                <p><strong>Al-Rahbiyyah Pro</strong> • The Final Word in Islamic Inheritance</p>
+                <p>Generated securely at <strong>www.alrahbiyyah.com</strong></p>
+              </div>
+              <p className="text-center text-xs mt-4 text-slate-400 italic">This algorithmic distribution serves as an educational guide and does not replace formal fatwa from a certified Islamic scholar or court order.</p>
             </div>
           </div>
           
