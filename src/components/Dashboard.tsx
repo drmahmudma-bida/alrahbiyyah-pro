@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { calculateUltimateRahbiyyah } from '../lib/mathEngine';
 import dynamic from 'next/dynamic';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-const PaystackButton = dynamic(
+// --- The Paystack Contract ---
+interface PaystackProps {
+  email: string;
+  amount: number;
+  publicKey: string;
+  text: string;
+  onSuccess: (reference: any) => void;
+  onClose: () => void;
+  className?: string;
+}
+
+const PaystackButton = dynamic<PaystackProps>(
   () => import('react-paystack').then((mod) => mod.PaystackButton as any),
   { ssr: false }
 );
 
 export default function AlRahbiyyahDashboard() {
+  const resultsRef = useRef<HTMLDivElement>(null); 
+  
   const [heirs, setHeirs] = useState({
     husband: 0, wives: 0, 
     sons: 0, daughters: 0, grandsons: 0, granddaughters: 0,
@@ -27,16 +42,32 @@ export default function AlRahbiyyahDashboard() {
   const [donationAmount, setDonationAmount] = useState<number>(1000);
   const [donationEmail, setDonationEmail] = useState<string>('');
 
-  const onSuccess = (reference: any) => {
-    alert(`Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference}`);
-    setShowDonationModal(false);
-    setDonationAmount(1000);
-    setDonationEmail('');
+  const exportPDF = async () => {
+    if (!resultsRef.current) return;
+    
+    // Temporarily hide the PDF button during capture
+    const btn = document.getElementById('pdf-download-btn');
+    if (btn) btn.style.display = 'none';
+
+    const canvas = await html2canvas(resultsRef.current, { scale: 2 });
+    
+    if (btn) btn.style.display = 'flex'; // Bring it back
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`Al-Rahbiyyah-Faraid-Report-${new Date().toLocaleDateString()}.pdf`);
   };
 
-  const onClose = () => {
-    console.log("Paystack window closed by user.");
+  const onSuccess = (reference: any) => {
+    alert(`Jazakallahu Khairan! Reference: ${reference.reference}`);
+    setShowDonationModal(false);
   };
+
+  const onClose = () => console.log("Closed");
 
   const gross = parseFloat(finances.grossEstate) || 0;
   const funeral = parseFloat(finances.funeralCosts) || 0;
@@ -120,7 +151,7 @@ export default function AlRahbiyyahDashboard() {
             <div className="w-10 h-10 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center font-bold text-lg mr-4 border border-blue-700/50">1</div>
             <div>
               <h2 className="text-2xl font-bold text-white">Pre-Distribution Sequencer</h2>
-              <p className="text-slate-400 text-sm mt-1">Determine the exact Net Estate (Tarikah) before Fara'id division.</p>
+              <p className="text-slate-400 text-sm mt-1">Determine the exact Net Estate (Tarikah) before Fara&apos;id division.</p>
             </div>
           </div>
           <div className="flex items-center bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 w-max">
@@ -174,7 +205,7 @@ export default function AlRahbiyyahDashboard() {
         <div className="bg-[#030610] border border-emerald-900/50 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center relative z-10 shadow-2xl">
           <div className="mb-4 md:mb-0">
             <h3 className="text-slate-300 font-bold text-lg mb-1">Final Net Estate (Tarikah)</h3>
-            <p className="text-sm text-emerald-400/80">Available for Fara'id division.</p>
+            <p className="text-sm text-emerald-400/80">Available for Fara&apos;id division.</p>
           </div>
           <div className="text-right flex items-center justify-end">
             <span className="text-2xl text-emerald-500 mr-2 font-bold">{currency}</span>
@@ -271,7 +302,7 @@ export default function AlRahbiyyahDashboard() {
 
       {/* --- RESULTS DISPLAY TERMINAL --- */}
       {results && (
-        <div className="bg-[#030610] border border-yellow-600/50 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div ref={resultsRef} id="results-to-print" className="bg-[#030610] border border-yellow-600/50 rounded-2xl shadow-[0_0_50px_rgba(202,138,4,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="bg-gradient-to-r from-slate-900 to-[#0a1128] border-b border-slate-800 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">Final Shariah Distribution</h2>
@@ -331,7 +362,7 @@ export default function AlRahbiyyahDashboard() {
                                 <div className="p-6 border-l-2 border-yellow-600 bg-gradient-to-r from-yellow-900/10 to-transparent rounded-r-xl shadow-inner">
                                   <div className="flex items-center gap-2 mb-4">
                                     <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                    <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Divine Proof (Qur'an/Sunnah)</span>
+                                    <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Divine Proof (Qur&apos;an/Sunnah)</span>
                                   </div>
                                   <div className="text-right mb-4">
                                     <p className="text-2xl text-yellow-400 font-bold leading-relaxed" dir="rtl">{quranProof.arabic ? `"${quranProof.arabic}"` : ""}</p>
@@ -367,13 +398,25 @@ export default function AlRahbiyyahDashboard() {
               </table>
             </div>
           </div>
+          
+          {/* THE NEW PDF DOWNLOAD BUTTON */}
+          <div className="p-6 border-t border-slate-800 flex justify-center bg-slate-900/50">
+             <button 
+               id="pdf-download-btn"
+               onClick={exportPDF}
+               className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+             >
+               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17v3a2 2 0 002 2h14a2 2 0 002-2v-3M9 10H7a2 2 0 01-2-2V4a2 2 0 012-2h10a2 2 0 012 2v4a2 2 0 01-2 2h-2"></path></svg>
+               Download Official PDF Report
+             </button>
+           </div>
+
         </div>
       )}
 
       {/* --- DONATION MODAL --- */}
       {showDonationModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          {/* THE FIX IS HERE: overflow-y-auto and max-h-[90vh] added below */}
           <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh] relative">
             <button onClick={() => setShowDonationModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -409,7 +452,6 @@ export default function AlRahbiyyahDashboard() {
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-slate-500">Account No:</span>
-                    {/* DON'T FORGET TO ADD YOUR REAL ACCOUNT NUMBER HERE LATER */}
                     <span className="text-yellow-400 font-bold text-lg">0123456789</span>
                   </div>
                 </div>
@@ -428,7 +470,7 @@ export default function AlRahbiyyahDashboard() {
                 <span className="bg-slate-900 px-4 text-xs text-slate-500 relative z-10 uppercase font-bold">Or</span>
               </div>
 
-              {/* Option 2: Paystack Gateway Integration (SSR-SAFE) */}
+              {/* Option 2: Paystack Gateway Integration */}
               <div>
                 <h4 className="text-blue-400 font-bold mb-3 flex items-center text-sm uppercase tracking-wider">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
@@ -457,7 +499,6 @@ export default function AlRahbiyyahDashboard() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
