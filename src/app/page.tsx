@@ -3,38 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import ReviewsSection from '../components/ReviewsSection';
-import dynamic from 'next/dynamic';
-
-interface PaystackProps {
-  email: string;
-  amount: number;
-  publicKey: string;
-  text: string;
-  onSuccess: (reference: any) => void;
-  onClose: () => void;
-  className?: string;
-}
-
-const PaystackButton = dynamic<PaystackProps>(
-  () => import('react-paystack').then((mod) => mod.PaystackButton as any),
-  { ssr: false }
-);
 
 export default function LandingPage() {
   const [showDonationModal, setShowDonationModal] = useState(false);
-  const [donationAmount, setDonationAmount] = useState(1000);
-  const [donationEmail, setDonationEmail] = useState('');
-
-  const onSuccess = (reference: any) => {
-    alert(`Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference}`);
-    setShowDonationModal(false);
-    setDonationAmount(1000);
-    setDonationEmail('');
-  };
-
-  const onClose = () => {
-    console.log("Paystack window closed by user.");
-  };
 
   const handleShare = async () => {
     const shareData = {
@@ -79,7 +50,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="max-w-3xl mx-auto text-lg md:text-xl text-slate-300 mb-10 leading-relaxed">
-            The world&apos;s first smart Fara&apos;id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
+            The world's first smart Fara'id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full justify-center">
@@ -144,7 +115,7 @@ export default function LandingPage() {
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-emerald-400 mr-3">❖</span> Unborn Foetus Escrow System</h3>
-              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school&apos;s unique rules.</p>
+              <p className="text-slate-400 leading-relaxed">Automatically calculate and lock away protective legal shares for pregnant heirs based on your school's unique rules.</p>
             </div>
             <div className="p-8 rounded-2xl bg-gradient-to-b from-slate-800/40 to-slate-900/40 border border-slate-700/50 hover:border-yellow-500/30 transition-all duration-300">
               <h3 className="text-2xl font-bold text-white mb-3 flex items-center"><span className="text-yellow-400 mr-3">❖</span> Modern Asset Integration</h3>
@@ -294,30 +265,26 @@ export default function LandingPage() {
                 <span className="bg-slate-900 px-4 text-xs text-slate-500 relative z-10 uppercase font-bold">Or</span>
               </div>
 
-              {/* Option 2: Paystack Gateway Integration */}
+              {/* Option 2: Paystack Gateway Link */}
               <div>
                 <h4 className="text-blue-400 font-bold mb-3 flex items-center text-sm uppercase tracking-wider">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                   Option 2: Secure Online Payment
                 </h4>
                 
-                <div className="space-y-3 mb-4">
-                  <input type="email" placeholder="Your Email Address (Optional)" value={donationEmail} onChange={e => setDonationEmail(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500" />
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₦</span>
-                    <input type="number" placeholder="Amount" value={donationAmount} onChange={e => setDonationAmount(Number(e.target.value))} className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-8 pr-4 py-3 text-white focus:outline-none focus:border-blue-500" />
-                  </div>
-                </div>
+                <p className="text-sm text-slate-400 mb-4">
+                  Click the button below to be securely redirected to our official Paystack storefront to complete your donation.
+                </p>
 
-                <PaystackButton
-                  email={donationEmail || "donor@alrahbiyyah.com"}
-                  amount={Math.max(100, donationAmount) * 100}
-                  publicKey={process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_YOUR_PAYSTACK_PUBLIC_KEY'}
-                  text={`Donate ₦${Math.max(100, donationAmount)} Securely`}
-                  onSuccess={onSuccess}
-                  onClose={onClose}
+                <a 
+                  href="https://paystack.shop/pay/x2gnn2vwrt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] flex justify-center items-center gap-2 mb-4"
-                />
+                >
+                  Proceed to Secure Checkout
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
               </div>
             </div>
           </div>
