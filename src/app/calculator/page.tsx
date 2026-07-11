@@ -11,8 +11,8 @@ export default function CalculatorPage() {
   return (
     <main className="bg-[#060b19] min-h-screen relative">
       
-      {/* --- TOP NAVIGATION BAR --- */}
-      <div className="w-full bg-[#030610] border-b border-slate-800 py-3 px-4 shadow-md flex justify-between items-center z-40 relative">
+      {/* --- TOP NAVIGATION BAR (Now hidden during PDF Print!) --- */}
+      <div className="print:hidden w-full bg-[#030610] border-b border-slate-800 py-3 px-4 shadow-md flex justify-between items-center z-40 relative">
         <Link 
           href="/" 
           className="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-emerald-400 transition-colors"
@@ -38,7 +38,7 @@ export default function CalculatorPage() {
 
       {/* --- PREMIUM MANUAL GUIDE MODAL (POPUP) --- */}
       {isGuideOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm print:hidden">
           <div className="bg-slate-900 border border-yellow-600/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(202,138,4,0.15)] flex flex-col animate-in fade-in zoom-in duration-300">
             
             {/* Modal Header */}
