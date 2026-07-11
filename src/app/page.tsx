@@ -28,11 +28,11 @@ const [donationAmount, setDonationAmount] = useState(1000);
 const [donationEmail, setDonationEmail] = useState('');
 
 const onSuccess = (reference: any) => {
-alert(Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference});
-setShowDonationModal(false);
-setDonationAmount(1000);
-setDonationEmail('');
-};
+    alert(`Jazakallahu Khairan! Your donation was successful. Reference: ${reference.reference}`);
+    setShowDonationModal(false);
+    setDonationAmount(1000);
+    setDonationEmail('');
+  };
 
 const onClose = () => {
 console.log("Paystack window closed by user.");
