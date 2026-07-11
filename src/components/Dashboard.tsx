@@ -28,20 +28,21 @@ export default function AlRahbiyyahDashboard() {
       setIsGeneratingPDF(true);
       if (!resultsRef.current) return;
       
-      const btn = document.getElementById('pdf-download-btn');
-      if (btn) btn.style.display = 'none';
+      // Wait a moment for any CSS animations to fully finish rendering
+      await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Reduced scale from 2 to 1.5 and specified JPEG to prevent memory crashes on mobile/live servers
-      const canvas = await html2canvas(resultsRef.current, { scale: 1.5, useCORS: true });
+      const canvas = await html2canvas(resultsRef.current, { 
+        scale: 1, // Standard scale to prevent memory crashes on mobile
+        useCORS: true,
+        backgroundColor: '#030610' // Force the dark background
+      });
       
-      if (btn) btn.style.display = 'flex'; 
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Al-Rahbiyyah-Faraid-Report-${new Date().toLocaleDateString()}.pdf`);
     } catch (error) {
       console.error("PDF Generation Failed:", error);
@@ -308,7 +309,7 @@ export default function AlRahbiyyahDashboard() {
                     <th className="p-4 font-semibold">Fraction</th>
                     <th className="p-4 font-semibold">Percentage</th>
                     <th className="p-4 font-semibold text-right">Monetary Payout</th>
-                    <th className="p-4 font-semibold text-center">Proofs</th>
+                    <th className="p-4 font-semibold text-center" data-html2canvas-ignore="true">Proofs</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/50">
@@ -327,7 +328,7 @@ export default function AlRahbiyyahDashboard() {
                           <td className="p-4 font-mono text-yellow-500 text-xl">{heir.fraction}</td>
                           <td className="p-4 text-slate-300 font-semibold">{heir.percentage}%</td>
                           <td className="p-4 text-right font-bold text-emerald-400 text-xl">{currency}{heir.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                          <td className="p-4 text-center">
+                          <td className="p-4 text-center" data-html2canvas-ignore="true">
                             {heir.name !== 'Error' && (
                               <button className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto transition-all ${isExpanded ? 'bg-yellow-600 text-black rotate-180' : 'bg-slate-800 text-yellow-500 group-hover:bg-slate-700'}`}>
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -381,7 +382,8 @@ export default function AlRahbiyyahDashboard() {
             </div>
           </div>
           
-          <div className="p-6 border-t border-slate-800 flex justify-center bg-slate-900/50">
+          {/* THE NEW PDF DOWNLOAD BUTTON */}
+          <div className="p-6 border-t border-slate-800 flex justify-center bg-slate-900/50" data-html2canvas-ignore="true">
              <button 
                id="pdf-download-btn"
                onClick={exportPDF}
