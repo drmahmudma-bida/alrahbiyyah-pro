@@ -1,20 +1,27 @@
-import './globals.css'; // Optional: if you have global styles
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 
-export const metadata = {
-  title: 'Al-Rahbiyyah Pro',
-  description: 'The Definitive Islamic Estate & Inheritance Framework',
-};
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'Al-Rahbiyyah Pro | Islamic Inheritance Calculator',
+  description: 'The world’s first smart Fara’id ecosystem powered by the foundational texts of all four Sunni Madhabs. Calculate Shariah-compliant estate distributions instantly.',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-950">
+      <body className={inter.className}>
         {children}
+        {/* This single line tracks all your visitors automatically! */}
+        <Analytics />
       </body>
     </html>
-  );
+  )
 }
