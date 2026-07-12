@@ -81,16 +81,16 @@ export default function AlRahbiyyahDashboard() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert("Account Number Copied!");
+    alert("Copied to clipboard!");
   };
 
   const HeirCounter = ({ name, label, max = 99 }: { name: string, label: string, max?: number }) => (
-    <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors">
-      <span className="text-slate-300 font-medium">{label}</span>
+    <div className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl hover:border-yellow-600/30 transition-colors print:border-none print:bg-transparent print:p-1">
+      <span className="text-slate-300 font-medium print:text-black">{label}</span>
       <div className="flex items-center gap-3">
-        <button onClick={() => updateHeir(name, -1)} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors">-</button>
-        <span className="w-4 text-center text-white font-bold">{heirs[name as keyof typeof heirs]}</span>
-        <button onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }} className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors">+</button>
+        <button onClick={() => updateHeir(name, -1)} className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold transition-colors print:hidden">-</button>
+        <span className="w-4 text-center text-white font-bold print:text-black">{heirs[name as keyof typeof heirs]}</span>
+        <button onClick={() => { if (heirs[name as keyof typeof heirs] < max) updateHeir(name, 1); }} className="w-8 h-8 rounded-full bg-slate-800 text-yellow-500 hover:bg-yellow-600/20 hover:text-yellow-400 flex items-center justify-center font-bold transition-colors print:hidden">+</button>
       </div>
     </div>
   );
@@ -110,6 +110,7 @@ export default function AlRahbiyyahDashboard() {
 
       {/* --- ALL INPUT SECTIONS (Hidden during PDF generation) --- */}
       <div className="print-hide space-y-8">
+        
         {/* --- SEQUENCER --- */}
         <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
           <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 relative z-10 gap-4">
@@ -444,69 +445,105 @@ export default function AlRahbiyyahDashboard() {
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Support Al-Rahbiyyah Pro</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Your Sadaqah ensures this complex Shariah ecosystem remains 100% free for the Ummah. Choose your preferred way to support.
+                Your Sadaqah ensures this Shariah ecosystem remains 100% free for the Ummah. Choose your preferred currency and method below.
               </p>
             </div>
 
             <div className="p-6 space-y-6">
-              {/* Option 1: Bank Transfer */}
-              <div className="bg-slate-950 border border-emerald-900/50 rounded-xl p-5 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                <h4 className="text-emerald-400 font-bold mb-4 flex items-center text-sm uppercase tracking-wider">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                  Option 1: Direct Bank Transfer
+              
+              {/* --- NGN LOCAL PAYMENT METHODS --- */}
+              <div className="space-y-4">
+                <h4 className="text-emerald-400 font-bold flex items-center text-sm uppercase tracking-wider border-b border-slate-800 pb-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                  Nigerian Donors (NGN)
                 </h4>
-                
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Bank Name:</span>
-                    <span className="text-white font-semibold">Jaiz Bank Plc</span>
+
+                <div className="bg-slate-950 border border-emerald-900/50 rounded-xl p-5 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Bank:</span>
+                      <span className="text-white font-semibold">Jaiz Bank Plc</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Name:</span>
+                      <span className="text-white font-semibold">Almahmudiyyah Press</span>
+                    </div>
+                    <div className="flex justify-between text-sm items-center">
+                      <span className="text-slate-500">Account:</span>
+                      <span className="text-yellow-400 font-bold text-lg">0123456789</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Account Name:</span>
-                    <span className="text-white font-semibold">Almahmudiyyah Press</span>
-                  </div>
-                  <div className="flex justify-between text-sm items-center">
-                    <span className="text-slate-500">Account No:</span>
-                    <span className="text-yellow-400 font-bold text-lg">0123456789</span>
-                  </div>
+                  <button 
+                    onClick={() => copyToClipboard('0123456789')} 
+                    className="w-full py-2 bg-emerald-900/30 text-emerald-400 font-medium rounded-lg hover:bg-emerald-800/40 transition-colors border border-emerald-800/50 flex justify-center items-center gap-2 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Copy NGN Account
+                  </button>
                 </div>
-                
-                <button 
-                  onClick={() => copyToClipboard('0123456789')} 
-                  className="w-full py-2 bg-emerald-900/30 text-emerald-400 font-medium rounded-lg hover:bg-emerald-800/40 transition-colors border border-emerald-800/50 flex justify-center items-center gap-2 text-sm"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                  Copy Account Number
-                </button>
-              </div>
-
-              <div className="relative flex items-center justify-center">
-                <div className="border-t border-slate-800 w-full absolute"></div>
-                <span className="bg-slate-900 px-4 text-xs text-slate-500 relative z-10 uppercase font-bold">Or</span>
-              </div>
-
-              {/* Option 2: Paystack Gateway Link */}
-              <div>
-                <h4 className="text-blue-400 font-bold mb-3 flex items-center text-sm uppercase tracking-wider">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                  Option 2: Secure Online Payment
-                </h4>
-                
-                <p className="text-sm text-slate-400 mb-4">
-                  Click the button below to be securely redirected to our official Paystack storefront to complete your donation.
-                </p>
 
                 <a 
                   href="https://paystack.shop/pay/x2gnn2vwrt" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all transform hover:scale-[1.02] flex justify-center items-center gap-2 mb-4"
+                  className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl hover:bg-slate-700 border border-slate-700 transition-all flex justify-center items-center gap-2 shadow-sm"
                 >
-                  Proceed to Secure Checkout
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                  Donate in Naira (₦) via Card
                 </a>
               </div>
+
+              {/* --- USD INTERNATIONAL PAYMENT METHOD --- */}
+              <div className="space-y-4 pt-2">
+                <h4 className="text-blue-400 font-bold flex items-center text-sm uppercase tracking-wider border-b border-slate-800 pb-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                  International Donors (USD)
+                </h4>
+
+                <div className="bg-slate-950 border border-blue-900/50 rounded-xl p-5 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                  <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                    Directly transfer USD via standard US ACH, Wire, or apps like Sendwave, Remitly, and Wise to our official US receiving account.
+                  </p>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Bank Name:</span>
+                      <span className="text-white font-semibold text-right">Lead Bank</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Account Name:</span>
+                      <span className="text-white font-semibold text-right">Muhammad Abdullahi Mahmud</span>
+                    </div>
+                    <div className="flex justify-between text-sm items-center mt-2">
+                      <span className="text-slate-500">Account No:</span>
+                      <span className="text-yellow-400 font-bold text-lg">219503676583</span>
+                    </div>
+                    <div className="flex justify-between text-sm items-center">
+                      <span className="text-slate-500">Routing No:</span>
+                      <span className="text-slate-300 font-medium tracking-wider">101019644</span>
+                    </div>
+                    <div className="flex justify-between text-sm items-center">
+                      <span className="text-slate-500">Account Type:</span>
+                      <span className="text-slate-300 font-medium">Checking</span>
+                    </div>
+                    <div className="flex justify-between text-sm mt-2 pt-2 border-t border-slate-800">
+                      <span className="text-slate-500">Bank Address:</span>
+                      <span className="text-slate-400 text-right text-xs max-w-[150px]">1801 Main St., Kansas City, MO 64108</span>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => copyToClipboard('219503676583')} 
+                    className="w-full py-2 bg-blue-900/30 text-blue-400 font-medium rounded-lg hover:bg-blue-800/40 transition-colors border border-blue-800/50 flex justify-center items-center gap-2 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Copy USD Account
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
