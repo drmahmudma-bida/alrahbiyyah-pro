@@ -28,7 +28,7 @@ export default function LandingPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert("Account Number Copied!");
+    alert("Copied to clipboard!");
   };
 
   return (
@@ -236,24 +236,25 @@ export default function LandingPage() {
                   Nigerian Donors (NGN)
                 </h4>
 
+                {/* Option 1: OPay Bank Transfer (NGN) */}
                 <div className="bg-slate-950 border border-emerald-900/50 rounded-xl p-5 relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-500">Bank:</span>
-                      <span className="text-white font-semibold">Jaiz Bank Plc</span>
+                      <span className="text-white font-semibold">OPay</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-500">Name:</span>
-                      <span className="text-white font-semibold">Almahmudiyyah Press</span>
+                      <span className="text-white font-semibold">Muhammad Abdullahi Mahmud</span>
                     </div>
                     <div className="flex justify-between text-sm items-center">
                       <span className="text-slate-500">Account:</span>
-                      <span className="text-yellow-400 font-bold text-lg">0123456789</span>
+                      <span className="text-yellow-400 font-bold text-lg">6104806156</span>
                     </div>
                   </div>
                   <button 
-                    onClick={() => copyToClipboard('0123456789')} 
+                    onClick={() => copyToClipboard('6104806156')} 
                     className="w-full py-2 bg-emerald-900/30 text-emerald-400 font-medium rounded-lg hover:bg-emerald-800/40 transition-colors border border-emerald-800/50 flex justify-center items-center gap-2 text-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -261,6 +262,7 @@ export default function LandingPage() {
                   </button>
                 </div>
 
+                {/* Option 2: Paystack Gateway (NGN) */}
                 <a 
                   href="https://paystack.shop/pay/x2gnn2vwrt" 
                   target="_blank" 
@@ -326,6 +328,6 @@ export default function LandingPage() {
           </div>
         </div>
       )}
-      </main>
+    </main>
   );
 }
