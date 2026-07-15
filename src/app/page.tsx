@@ -137,7 +137,7 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-6 text-2xl">👨‍👩‍👧‍👦</div>
               <h3 className="text-2xl font-bold text-white mb-4">For the Public</h3>
               <p className="text-slate-400 mb-8">Protect Your Family. Generate a bulletproof, Shariah-compliant Islamic Will (Wasiyyah) and direct inheritance breakdown in minutes.</p>
-              <Link href="/calculator" className="mt-auto px-6 py-3 border border-emerald-500 text-emerald-400 rounded-full hover:bg-emerald-900/30 transition-colors w-full font-semibold">Start Family Plan</Link>
+              <Link href="/pro" className="mt-auto px-6 py-3 border border-emerald-500 text-emerald-400 rounded-full hover:bg-emerald-900/30 transition-colors w-full font-semibold">Start Family Plan</Link>
             </div>
             
             <div className="bg-[#060b19] border border-yellow-700/50 rounded-2xl p-10 text-center flex flex-col items-center shadow-[0_0_30px_rgba(202,138,4,0.05)]">
