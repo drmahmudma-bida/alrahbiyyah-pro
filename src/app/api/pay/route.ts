@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   // 1. Verify the user is logged in
   const { userId } = await auth();
   const user = await currentUser();
@@ -12,9 +12,11 @@ export async function POST() {
 
   const email = user.emailAddresses[0].emailAddress;
   
-  // 2. Set your bundle price (Paystack uses kobo for Naira, so multiply by 100)
-  // Let's set it to 5,000 Naira for this example
-  const amountInKobo = 5000 * 100; 
+  // 2. Set your bundle price to 15,000 Naira (Paystack uses kobo)
+  const amountInKobo = 15000 * 100; 
+
+  // Dynamically grab the current website URL (works for both localhost and Vercel)
+  const origin = new URL(request.url).origin;
 
   try {
     // 3. Talk to Paystack securely
@@ -30,7 +32,7 @@ export async function POST() {
         metadata: {
           clerk_user_id: userId, // This is the secret handshake!
         },
-        callback_url: "http://localhost:3000/pro", // Where they go after paying
+        callback_url: `${origin}/pro`, // Dynamically sends them back to the dashboard
       }),
     });
 
