@@ -89,7 +89,7 @@ export default function ProDashboard() {
                 <li>Download the software using the button below.</li>
                 <li>Install and open the application on your Windows PC.</li>
                 <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
-                <li>Email your Machine ID to <strong>drmahmudma@gmail.com</strong>.</li>
+                <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
                 <li>We will verify your purchase and send you your unique Activation Key!</li>
               </ol>
 
