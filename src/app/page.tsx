@@ -53,21 +53,44 @@ export default function LandingPage() {
             The world's first smart Fara'id (inheritance) ecosystem powered by Matn Al-Rahbiyyah and the authoritative texts of all four Sunni Madhabs. Built for families, scholars, and legal professionals.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full justify-center">
-            <Link 
-              href="/calculator"
-              className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-emerald-600 rounded-full shadow-[0_0_30px_rgba(5,150,105,0.4)] hover:bg-emerald-500 hover:shadow-[0_0_40px_rgba(5,150,105,0.6)] transition-all duration-300 border border-emerald-400/50"
-            >
-              Calculate Inheritance Shares Now — 100% Free
-            </Link>
+          {/* --- NEW OPTIMIZED HERO BUTTONS --- */}
+          <div className="w-full max-w-2xl flex flex-col items-center mb-16">
             
-            <button 
-              onClick={handleShare}
-              className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-slate-300 bg-slate-800/50 rounded-full hover:bg-slate-700/50 hover:text-white transition-all duration-300 border border-slate-700 backdrop-blur-sm cursor-pointer"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-              Share Platform
-            </button>
+            {/* Primary & Premium Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mb-4">
+              <Link 
+                href="/calculator"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-emerald-600 rounded-xl shadow-[0_0_30px_rgba(5,150,105,0.4)] hover:bg-emerald-500 hover:shadow-[0_0_40px_rgba(5,150,105,0.6)] transition-all duration-300 border border-emerald-400/50 w-full sm:w-auto"
+              >
+                Calculate Inheritance (Free)
+              </Link>
+              
+              <Link 
+                href="/pro"
+                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-amber-600 rounded-xl shadow-[0_0_30px_rgba(217,119,6,0.3)] hover:bg-amber-500 hover:shadow-[0_0_40px_rgba(217,119,6,0.5)] transition-all duration-300 border border-amber-400/50 w-full sm:w-auto gap-2"
+              >
+                <span>⭐</span> Access Pro Tools
+              </Link>
+            </div>
+
+            {/* Secondary Support Actions */}
+            <div className="flex flex-row gap-4 w-full justify-center">
+              <button 
+                onClick={() => setShowDonationModal(true)}
+                className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-emerald-400 bg-emerald-900/10 rounded-lg hover:bg-emerald-900/30 transition-all duration-300 border border-emerald-700/50 flex-1 sm:flex-none gap-2"
+              >
+                <span>❤️</span> Donate
+              </button>
+
+              <button 
+                onClick={handleShare}
+                className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-slate-300 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 hover:text-white transition-all duration-300 border border-slate-700 backdrop-blur-sm cursor-pointer flex-1 sm:flex-none gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                Share
+              </button>
+            </div>
+
           </div>
         </div>
       </section>
