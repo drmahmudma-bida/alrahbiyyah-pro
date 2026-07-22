@@ -79,7 +79,7 @@ export default function ProDashboard() {
             {/* 4. Windows Software Setup & Licensing Instructions */}
             <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-left shadow-inner">
               <h3 className="text-xl font-bold text-yellow-800 mb-2">
-                🖥️ Fara'id Software Activation Guide
+                🖥️ Al-Madkhal fi 'Ilmil Mirath Activation Guide
               </h3>
               <p className="text-gray-700 mb-4 text-sm">
                 Your desktop software is secured with hardware-locked licensing. To unlock your copy, follow these steps:
@@ -104,7 +104,7 @@ export default function ProDashboard() {
                 rel="noopener noreferrer"
                 className="p-4 bg-green-600 text-white font-bold rounded shadow hover:bg-green-700 block text-center"
               >
-                Download Fara'id Software (Windows .exe)
+                Download Al-Madkhal Software (Windows .exe)
               </a>
             </div>
 
