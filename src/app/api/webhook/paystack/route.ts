@@ -23,6 +23,9 @@ export async function POST(req: Request) {
     // 3. If the payment was successful, unlock the account!
     if (event.event === "charge.success") {
       const clerkUserId = event.data.metadata.clerk_user_id;
+      
+      // Catch the new plan data (default to desktop if missing for safety)
+      const planPurchased = event.data.metadata.plan_purchased || "desktop"; 
 
       if (clerkUserId) {
         // This talks directly to your Clerk database and flips the switch to green
@@ -30,6 +33,7 @@ export async function POST(req: Request) {
         await client.users.updateUserMetadata(clerkUserId, {
           publicMetadata: {
             hasPaid: true,
+            plan: planPurchased, // Save exactly which tier they bought!
           },
         });
       }
