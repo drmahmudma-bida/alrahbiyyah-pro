@@ -49,7 +49,7 @@ export default function ProDashboard() {
 
       {hasPaid ? (
         /* =========================================
-           UNLOCKED STATE (Smart Vault)
+           UNLOCKED STATE (Smart Vault - AFTER PAYMENT)
            ========================================= */
         <div className="p-8 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-3xl mx-auto shadow-lg">
           <h2 className="text-2xl font-bold text-emerald-800">
@@ -132,7 +132,7 @@ export default function ProDashboard() {
         </div>
       ) : (
         /* =========================================
-           LOCKED STATE: THE 3-TIER PRICING GRID
+           LOCKED STATE: THE 3-TIER PRICING GRID (BEFORE PAYMENT)
            ========================================= */
         <div className="w-full max-w-6xl mx-auto">
           <div className="mb-10">
@@ -161,7 +161,6 @@ export default function ProDashboard() {
                 ))}
               </ul>
               
-              {/* THE ANDROID WARNING FOR DIRECT DOWNLOAD */}
               <div className="mb-6 p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg text-xs text-yellow-900 leading-tight">
                 <strong>🛡️ Android Warning:</strong> Your phone may flag this as an "Unknown Source". Tap <strong>Settings</strong> and <strong>"Allow from this source"</strong> to install safely.
               </div>
@@ -226,6 +225,24 @@ export default function ProDashboard() {
             </div>
 
           </div>
+
+          {/* --- NEW: DESKTOP ACTIVATION NOTICE BEFORE PAYMENT --- */}
+          <div className="mt-12 p-6 bg-slate-50 border border-slate-200 rounded-2xl text-left max-w-3xl mx-auto shadow-sm">
+            <h3 className="text-lg font-bold text-slate-800 mb-2">
+              🖥️ Important: How Desktop Activation Works (Tier 2 & 3)
+            </h3>
+            <p className="text-sm text-slate-600 mb-4">
+              Your desktop software is secured with hardware-locked licensing. To unlock your copy <strong>after payment</strong>, follow these steps:
+            </p>
+            <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700 font-medium">
+              <li>Download the software from your Unlocked Vault.</li>
+              <li>Install and open the application on your Windows PC.</li>
+              <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
+              <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
+              <li>We will verify your purchase and send you your unique Activation Key!</li>
+            </ol>
+          </div>
+
         </div>
       )}
     </div>
