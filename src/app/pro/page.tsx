@@ -78,12 +78,18 @@ export default function ProDashboard() {
                 <h3 className="text-xl font-bold text-teal-800 mb-2">
                   📱 Mobile App Download (Master Bundle Exclusive)
                 </h3>
-                <p className="text-slate-700 mb-4 text-sm">
-                  Download the Android APK file directly to your phone to calculate Fara'id on the go.
+                <p className="text-slate-700 mb-4 text-sm font-medium">
+                  Since you purchased the Master Bundle, do NOT pay inside the mobile app! Follow these steps to unlock your VIP access:
                 </p>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-slate-800 mb-6">
+                  <li>Download and install the Android app below.</li>
+                  <li>Open the app and locate your unique <strong>Device ID</strong> (Offline License).</li>
+                  <li>Email your Device ID (along with your Desktop Machine ID) to <strong>drmahmud2@gmail.com</strong>.</li>
+                  <li>We will reply with your VIP Activation PIN. Enter the PIN and click "Verify" to permanently unlock the engine!</li>
+                </ol>
 
                 <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg text-sm text-yellow-900">
-                  <strong>🛡️ Android Security Warning:</strong> Because you are downloading this app directly outside the Google Play Store, your phone will show a warning about <em>"Unknown Sources"</em> or <em>"Harmful Files."</em> This is completely normal for independent software. Simply tap <strong>Settings</strong> on the warning popup and enable <strong>"Allow from this source"</strong> (or tap "Download anyway") to install.
+                  <strong>🛡️ Android Security Warning:</strong> Because you are downloading this app directly outside the Google Play Store, your phone will show a warning about <em>"Unknown Sources"</em>. Simply tap <strong>Settings</strong> on the warning popup and enable <strong>"Allow from this source"</strong>.
                 </div>
 
                 <a 
@@ -110,7 +116,7 @@ export default function ProDashboard() {
                 <li>Download the software using the button below.</li>
                 <li>Install and open the application on your Windows PC.</li>
                 <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
-                <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
+                <li>Email your Machine ID {isBundle && <span>(along with your Mobile <strong>Device ID</strong>) </span>}to <strong>drmahmud2@gmail.com</strong>.</li>
                 <li>We will verify your purchase and send you your unique Activation Key!</li>
               </ol>
 
@@ -238,7 +244,7 @@ export default function ProDashboard() {
               <li>Download the software from your Unlocked Vault.</li>
               <li>Install and open the application on your Windows PC.</li>
               <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
-              <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
+              <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>. <em>(Master Bundle buyers: Include your Mobile Device ID here too!)</em></li>
               <li>We will verify your purchase and send you your unique Activation Key!</li>
             </ol>
             
