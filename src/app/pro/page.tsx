@@ -153,13 +153,19 @@ export default function ProDashboard() {
               <div className="text-4xl font-extrabold text-slate-900 mb-6">
                 ₦5,000 <span className="text-lg text-slate-400 font-normal">/device</span>
               </div>
-              <ul className="space-y-4 mb-8 flex-1">
+              <ul className="space-y-4 mb-6 flex-1">
                 {['Android .apk Download', 'Full Al-Hajb Engine', 'In-App Activation', 'No Desktop Access'].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-slate-600">
                     <span className="text-emerald-500 font-bold">✓</span> {feature}
                   </li>
                 ))}
               </ul>
+              
+              {/* THE ANDROID WARNING FOR DIRECT DOWNLOAD */}
+              <div className="mb-6 p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg text-xs text-yellow-900 leading-tight">
+                <strong>🛡️ Android Warning:</strong> Your phone may flag this as an "Unknown Source". Tap <strong>Settings</strong> and <strong>"Allow from this source"</strong> to install safely.
+              </div>
+
               <a 
                 href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
                 target="_blank"
