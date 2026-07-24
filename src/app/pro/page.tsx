@@ -12,15 +12,17 @@ export default function ProDashboard() {
   if (!isSignedIn) return null;
 
   const hasPaid = user.publicMetadata?.hasPaid === true;
+  // This checks if they bought the bundle (defaults to desktop for older users)
+  const userPlan = user.publicMetadata?.plan as string || "desktop"; 
+  const isBundle = userPlan === "bundle";
 
-  // Updated to accept the specific plan they clicked
   const handleCheckout = async (planType: string) => {
-    setIsLoading(planType); // Tracks which button is spinning
+    setIsLoading(planType); 
     try {
       const res = await fetch("/api/pay", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planType }) // Send the chosen plan to the server
+        body: JSON.stringify({ plan: planType }) 
       });
       const data = await res.json();
       
@@ -47,60 +49,64 @@ export default function ProDashboard() {
 
       {hasPaid ? (
         /* =========================================
-           UNLOCKED STATE: VIP DASHBOARD
+           UNLOCKED STATE (Smart Vault)
            ========================================= */
-        <div className="p-8 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-2xl mx-auto shadow-lg">
+        <div className="p-8 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-3xl mx-auto shadow-lg">
           <h2 className="text-2xl font-bold text-emerald-800">
             Alhamdulillah! Your Vault is Unlocked.
           </h2>
-          <p className="mt-4 text-lg mb-6">Here are your premium tools:</p>
+          <p className="mt-4 text-lg mb-6 text-slate-700">Here are your premium professional tools:</p>
+          
           <div className="flex flex-col gap-4">
             
-            <a href="/api/download?file=al-madkhal-english.pdf" className="p-4 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700 block text-center">
-              Download Al-Madkhal (PDF)
-            </a>
-
-            <a href="/api/download?file=al-madkhal-english.epub" className="p-4 bg-indigo-600 text-white font-bold rounded-xl shadow hover:bg-indigo-700 block text-center">
-              Download Al-Madkhal (EPUB for Mobile/Tablets)
-            </a>
-
-            <a href="/api/download?file=wasiyyah-bundle.zip" className="p-4 bg-slate-800 text-white font-bold rounded-xl shadow hover:bg-slate-900 block text-center">
-              Download Wasiyyah Templates (ZIP)
-            </a>
-
-            {/* --- NEW: MOBILE APP SECTION IN THE VAULT --- */}
-            <div className="mt-8 p-6 bg-white border border-emerald-200 rounded-xl text-left shadow-inner">
-              <h3 className="text-xl font-bold text-emerald-800 mb-2">
-                📱 Al-Madkhal Mobile App (Android)
-              </h3>
-              <p className="text-slate-700 mb-4 text-sm">
-                If your purchase included the Master Bundle, you get free access to the Mobile App! Download it below, install it, and email us your <strong>Device ID</strong> for your VIP Offline Activation PIN.
-              </p>
-              
-              <div className="mb-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-lg text-sm text-orange-900">
-                <strong>🛡️ Note on Android Security:</strong> Because this app is downloaded directly from us instead of the Play Store, your phone may show a <em>"File might be harmful"</em> warning or ask you to <em>"Allow installation from unknown sources."</em> This is completely normal for independent software. Click <strong>"Download anyway"</strong> and allow the installation to proceed.
-              </div>
-
-              <a 
-                href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 bg-emerald-600 text-white font-bold rounded-xl shadow hover:bg-emerald-700 block text-center"
-              >
-                Download Android App (.apk)
+            {/* Standard E-Books & Templates (Available to Desktop & Bundle) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <a href="/api/download?file=al-madkhal-english.pdf" className="p-4 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700 flex items-center justify-center text-sm">
+                Download PDF Book
+              </a>
+              <a href="/api/download?file=al-madkhal-english.epub" className="p-4 bg-indigo-600 text-white font-bold rounded-xl shadow hover:bg-indigo-700 flex items-center justify-center text-sm">
+                Download EPUB Book
+              </a>
+              <a href="/api/download?file=wasiyyah-bundle.zip" className="p-4 bg-slate-800 text-white font-bold rounded-xl shadow hover:bg-slate-900 flex items-center justify-center text-sm">
+                Wasiyyah Templates
               </a>
             </div>
 
-            {/* --- EXISTING: DESKTOP SECTION --- */}
-            <div className="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-xl text-left shadow-inner">
+            {/* Bundle Exclusive: Mobile App Download */}
+            {isBundle && (
+              <div className="p-6 bg-teal-50 border border-teal-200 rounded-xl text-left shadow-inner mt-4">
+                <h3 className="text-xl font-bold text-teal-800 mb-2">
+                  📱 Mobile App Download (Master Bundle Exclusive)
+                </h3>
+                <p className="text-slate-700 mb-4 text-sm">
+                  Download the Android APK file directly to your phone to calculate Fara'id on the go.
+                </p>
+
+                <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg text-sm text-yellow-900">
+                  <strong>🛡️ Android Security Warning:</strong> Because you are downloading this app directly outside the Google Play Store, your phone will show a warning about <em>"Unknown Sources"</em> or <em>"Harmful Files."</em> This is completely normal for independent software. Simply tap <strong>Settings</strong> on the warning popup and enable <strong>"Allow from this source"</strong> (or tap "Download anyway") to install.
+                </div>
+
+                <a 
+                  href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 bg-teal-600 text-white font-bold rounded-xl shadow hover:bg-teal-700 block text-center"
+                >
+                  Download Mobile App (.apk)
+                </a>
+              </div>
+            )}
+
+            {/* Desktop Software Instructions (Available to Desktop & Bundle) */}
+            <div className="mt-4 p-6 bg-yellow-50 border border-yellow-200 rounded-xl text-left shadow-inner">
               <h3 className="text-xl font-bold text-yellow-800 mb-2">
-                🖥️ Al-Madkhal fi 'Ilmil Mirath Activation Guide
+                🖥️ Windows Desktop Activation Guide
               </h3>
               <p className="text-slate-700 mb-4 text-sm">
                 Your desktop software is secured with hardware-locked licensing. To unlock your copy, follow these steps:
               </p>
               
-              <ol className="list-decimal list-inside space-y-2 text-sm text-slate-800 mb-6">
+              <ol className="list-decimal list-inside space-y-2 text-sm text-slate-800 mb-6 font-medium">
                 <li>Download the software using the button below.</li>
                 <li>Install and open the application on your Windows PC.</li>
                 <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
@@ -116,11 +122,12 @@ export default function ProDashboard() {
                 href="https://drive.google.com/uc?export=download&id=1P6D3MZ-Ob_V-9aQHk7_mwIGuEay_PJqZ" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 bg-blue-800 text-white font-bold rounded-xl shadow hover:bg-blue-900 block text-center"
+                className="p-4 bg-emerald-600 text-white font-bold rounded-xl shadow hover:bg-emerald-700 block text-center"
               >
                 Download Al-Madkhal Software (Windows .exe)
               </a>
             </div>
+
           </div>
         </div>
       ) : (
@@ -157,7 +164,7 @@ export default function ProDashboard() {
                 href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full block text-center py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all"
+                className="w-full block text-center py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all mt-auto"
               >
                 Download Android App
               </a>
@@ -183,7 +190,7 @@ export default function ProDashboard() {
               <button 
                 onClick={() => handleCheckout('bundle')}
                 disabled={isLoading !== null}
-                className="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg transition-all disabled:opacity-50"
+                className="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg transition-all disabled:opacity-50 mt-auto"
               >
                 {isLoading === 'bundle' ? "Connecting..." : "Get the Ultimate Bundle"}
               </button>
@@ -206,7 +213,7 @@ export default function ProDashboard() {
               <button 
                 onClick={() => handleCheckout('desktop')}
                 disabled={isLoading !== null}
-                className="w-full py-4 rounded-xl font-bold text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all disabled:opacity-50"
+                className="w-full py-4 rounded-xl font-bold text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all disabled:opacity-50 mt-auto"
               >
                  {isLoading === 'desktop' ? "Connecting..." : "Unlock Desktop Vault"}
               </button>
