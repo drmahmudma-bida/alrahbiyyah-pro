@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
-import Link from "next/link"; // Added for the mobile download link
+import Link from "next/link"; 
 
 export default function ProDashboard() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -47,7 +47,7 @@ export default function ProDashboard() {
 
       {hasPaid ? (
         /* =========================================
-           UNLOCKED STATE (Kept exactly as you had it)
+           UNLOCKED STATE: VIP DASHBOARD
            ========================================= */
         <div className="p-8 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-2xl mx-auto shadow-lg">
           <h2 className="text-2xl font-bold text-emerald-800">
@@ -68,7 +68,31 @@ export default function ProDashboard() {
               Download Wasiyyah Templates (ZIP)
             </a>
 
-            <div className="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-xl text-left shadow-inner">
+            {/* --- NEW: MOBILE APP SECTION IN THE VAULT --- */}
+            <div className="mt-8 p-6 bg-white border border-emerald-200 rounded-xl text-left shadow-inner">
+              <h3 className="text-xl font-bold text-emerald-800 mb-2">
+                📱 Al-Madkhal Mobile App (Android)
+              </h3>
+              <p className="text-slate-700 mb-4 text-sm">
+                If your purchase included the Master Bundle, you get free access to the Mobile App! Download it below, install it, and email us your <strong>Device ID</strong> for your VIP Offline Activation PIN.
+              </p>
+              
+              <div className="mb-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-lg text-sm text-orange-900">
+                <strong>🛡️ Note on Android Security:</strong> Because this app is downloaded directly from us instead of the Play Store, your phone may show a <em>"File might be harmful"</em> warning or ask you to <em>"Allow installation from unknown sources."</em> This is completely normal for independent software. Click <strong>"Download anyway"</strong> and allow the installation to proceed.
+              </div>
+
+              <a 
+                href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-4 bg-emerald-600 text-white font-bold rounded-xl shadow hover:bg-emerald-700 block text-center"
+              >
+                Download Android App (.apk)
+              </a>
+            </div>
+
+            {/* --- EXISTING: DESKTOP SECTION --- */}
+            <div className="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-xl text-left shadow-inner">
               <h3 className="text-xl font-bold text-yellow-800 mb-2">
                 🖥️ Al-Madkhal fi 'Ilmil Mirath Activation Guide
               </h3>
@@ -92,7 +116,7 @@ export default function ProDashboard() {
                 href="https://drive.google.com/uc?export=download&id=1P6D3MZ-Ob_V-9aQHk7_mwIGuEay_PJqZ" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 bg-emerald-600 text-white font-bold rounded-xl shadow hover:bg-emerald-700 block text-center"
+                className="p-4 bg-blue-800 text-white font-bold rounded-xl shadow hover:bg-blue-900 block text-center"
               >
                 Download Al-Madkhal Software (Windows .exe)
               </a>
@@ -129,12 +153,14 @@ export default function ProDashboard() {
                   </li>
                 ))}
               </ul>
-              <Link 
-                href="/al-madkhal-mobile.apk" 
+              <a 
+                href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full block text-center py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all"
               >
                 Download Android App
-              </Link>
+              </a>
             </div>
 
             {/* TIER 2: MASTER BUNDLE */}
