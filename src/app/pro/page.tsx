@@ -234,13 +234,17 @@ export default function ProDashboard() {
             <p className="text-sm text-slate-600 mb-4">
               Your desktop software is secured with hardware-locked licensing. To unlock your copy <strong>after payment</strong>, follow these steps:
             </p>
-            <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700 font-medium">
+            <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700 font-medium mb-4">
               <li>Download the software from your Unlocked Vault.</li>
               <li>Install and open the application on your Windows PC.</li>
               <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
               <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
               <li>We will verify your purchase and send you your unique Activation Key!</li>
             </ol>
+            
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg text-sm text-blue-900">
+              <strong>🛡️ Note on Windows Security:</strong> Because this is an independently published software, Microsoft Defender may show a blue <em>"Windows protected your PC"</em> screen when you open the installer. This is completely normal. Simply click <strong>"More info"</strong> and then <strong>"Run anyway"</strong> to proceed.
+            </div>
           </div>
 
         </div>
