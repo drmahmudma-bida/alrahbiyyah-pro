@@ -4,11 +4,9 @@ import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
-    // 1. Receive the message from Paystack
     const body = await req.text();
     const signature = req.headers.get("x-paystack-signature");
 
-    // 2. Verify it is ACTUALLY from Paystack (Security Check)
     const expectedSignature = crypto
       .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY as string)
       .update(body)
@@ -20,20 +18,16 @@ export async function POST(req: Request) {
 
     const event = JSON.parse(body);
 
-    // 3. If the payment was successful, unlock the account!
     if (event.event === "charge.success") {
       const clerkUserId = event.data.metadata.clerk_user_id;
-      
-      // Catch the new plan data (default to desktop if missing for safety)
       const planPurchased = event.data.metadata.plan_purchased || "desktop"; 
 
       if (clerkUserId) {
-        // This talks directly to your Clerk database and flips the switch to green
         const client = await clerkClient();
         await client.users.updateUserMetadata(clerkUserId, {
           publicMetadata: {
             hasPaid: true,
-            plan: planPurchased, // Save exactly which tier they bought!
+            plan: planPurchased,
           },
         });
       }
