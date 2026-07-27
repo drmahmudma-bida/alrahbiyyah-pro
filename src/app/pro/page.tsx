@@ -207,20 +207,65 @@ export default function ProDashboard() {
               </button>
             </div>
 
-            {/* TIER 3: DESKTOP ONLY */}
+            {/* TIER 3: DESKTOP PRO (With New Ecosystem Bundle Breakdown) */}
             <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg flex flex-col">
               <h3 className="text-xl font-bold text-slate-800 mb-2">Desktop Pro</h3>
               <p className="text-slate-500 text-sm mb-6">For detailed office drafting & printing.</p>
               <div className="text-4xl font-extrabold text-slate-900 mb-6">
                 ₦15,000 <span className="text-lg text-slate-400 font-normal">/lifetime</span>
               </div>
-              <ul className="space-y-4 mb-8 flex-1">
-                {['Windows Desktop Toolkit', 'Certified PDF Exports', 'Wasiyyah Implementation', 'Mobile App NOT Included'].map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-600">
-                    <span className="text-emerald-500 font-bold">✓</span> {feature}
-                  </li>
-                ))}
-              </ul>
+              
+              {/* --- NEW ECOSYSTEM BUNDLE DETAILS --- */}
+              <div className="mt-2 mb-8 flex-1">
+                <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2 mb-4">
+                  Ecosystem Bundle Includes:
+                </h4>
+                <div className="space-y-5">
+                  
+                  {/* Component I: The Books */}
+                  <div className="flex items-start">
+                    <span className="text-blue-600 text-xl mr-3">📚</span>
+                    <div>
+                      <h5 className="font-bold text-slate-900 text-sm">
+                        I. Core Commentary Volume
+                      </h5>
+                      <ul className="list-disc ml-4 mt-1 text-xs text-slate-600 font-medium space-y-1">
+                        <li>Islamic Inheritance Made Easy</li>
+                        <li>The Islamic Estate Blueprint (PDF & EPUB Mobile Edition)</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Component II: The Software */}
+                  <div className="flex items-start">
+                    <span className="text-emerald-600 text-xl mr-3">💻</span>
+                    <div>
+                      <h5 className="font-bold text-slate-900 text-sm">
+                        II. Fara'id Calculator App
+                      </h5>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Automated Windows (.exe) software with direct print-ready PDF reporting modules.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Component III: The Templates */}
+                  <div className="flex items-start">
+                    <span className="text-yellow-600 text-xl mr-3">📝</span>
+                    <div>
+                      <h5 className="font-bold text-slate-900 text-sm">
+                        III. Wasiyyah Template Pack
+                      </h5>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Customizable Word (.docx) legal schedules, debts, & asset ledgers.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              {/* --- END ECOSYSTEM BUNDLE DETAILS --- */}
+
               <button 
                 onClick={() => handleCheckout('desktop')}
                 disabled={isLoading !== null}
@@ -232,7 +277,7 @@ export default function ProDashboard() {
 
           </div>
 
-          {/* --- NEW: DESKTOP ACTIVATION NOTICE BEFORE PAYMENT --- */}
+          {/* --- DESKTOP ACTIVATION NOTICE BEFORE PAYMENT --- */}
           <div className="mt-12 p-6 bg-slate-50 border border-slate-200 rounded-2xl text-left max-w-3xl mx-auto shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 mb-2">
               🖥️ Important: How Desktop Activation Works (Tier 2 & 3)
