@@ -207,7 +207,7 @@ export default function ProDashboard() {
               </button>
             </div>
 
-            {/* TIER 3: DESKTOP PRO (With New Ecosystem Bundle Breakdown) */}
+            {/* TIER 3: DESKTOP PRO */}
             <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg flex flex-col">
               <h3 className="text-xl font-bold text-slate-800 mb-2">Desktop Pro</h3>
               <p className="text-slate-500 text-sm mb-6">For detailed office drafting & printing.</p>
@@ -222,17 +222,16 @@ export default function ProDashboard() {
                 </h4>
                 <div className="space-y-5">
                   
-                  {/* Component I: The Books */}
+                  {/* Component I: The Book */}
                   <div className="flex items-start">
                     <span className="text-blue-600 text-xl mr-3">📚</span>
                     <div>
                       <h5 className="font-bold text-slate-900 text-sm">
                         I. Core Commentary Volume
                       </h5>
-                      <ul className="list-disc ml-4 mt-1 text-xs text-slate-600 font-medium space-y-1">
-                        <li>Islamic Inheritance Made Easy</li>
-                        <li>The Islamic Estate Blueprint (PDF & EPUB Mobile Edition)</li>
-                      </ul>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                        <span className="font-bold">Islamic Inheritance Made Easy:</span> The Islamic Estate Blueprint — A Layman’s Guide to Wills, Debts and Divine Shares (PDF & EPUB Mobile Edition)
+                      </p>
                     </div>
                   </div>
 
