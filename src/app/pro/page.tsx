@@ -191,13 +191,70 @@ export default function ProDashboard() {
               <div className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-6">
                 ₦17,500 <span className="text-lg text-emerald-400 font-normal">/lifetime</span>
               </div>
-              <ul className="space-y-4 mb-8 flex-1">
-                {['Windows Desktop Toolkit', 'Mobile Android App Included', 'Premium PDF Generation', 'Master VIP Unlock PIN Provided'].map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-white">
-                    <span className="text-yellow-400 font-bold">✓</span> <span className="font-medium">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              
+              {/* --- NEW: MASTER BUNDLE COMPREHENSIVE BREAKDOWN (DARK THEME) --- */}
+              <div className="mt-2 mb-8 flex-1">
+                <h4 className="text-xs font-extrabold text-emerald-400 uppercase tracking-wide border-b border-slate-700 pb-2 mb-4">
+                  Includes Everything in Tier 1 & Desktop Pro:
+                </h4>
+                <div className="space-y-5">
+                  
+                  {/* Component I: The Book */}
+                  <div className="flex items-start">
+                    <span className="text-blue-400 text-xl mr-3">📚</span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">
+                        I. Core Commentary Volume
+                      </h5>
+                      <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                        <span className="font-bold text-white">Islamic Inheritance Made Easy:</span> The Islamic Estate Blueprint — A Layman’s Guide to Wills, Debts and Divine Shares (PDF & EPUB Mobile Edition)
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Component II: Desktop Software */}
+                  <div className="flex items-start">
+                    <span className="text-emerald-400 text-xl mr-3">💻</span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">
+                        II. Fara'id Desktop App
+                      </h5>
+                      <p className="text-xs text-slate-300 mt-1">
+                        Automated Windows (.exe) software with direct print-ready PDF reporting modules.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Component III: The Templates */}
+                  <div className="flex items-start">
+                    <span className="text-yellow-400 text-xl mr-3">📝</span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">
+                        III. Wasiyyah Template Pack
+                      </h5>
+                      <p className="text-xs text-slate-300 mt-1">
+                        Customizable Word (.docx) legal schedules, debts, & asset ledgers.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Component IV: Mobile App */}
+                  <div className="flex items-start">
+                    <span className="text-teal-400 text-xl mr-3">📱</span>
+                    <div>
+                      <h5 className="font-bold text-white text-sm">
+                        IV. Fara'id Mobile Edition
+                      </h5>
+                      <p className="text-xs text-slate-300 mt-1">
+                        Android (.apk) app for on-the-go quick calculations with VIP Unlock.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              {/* --- END MASTER BUNDLE BREAKDOWN --- */}
+
               <button 
                 onClick={() => handleCheckout('bundle')}
                 disabled={isLoading !== null}
@@ -215,7 +272,7 @@ export default function ProDashboard() {
                 ₦15,000 <span className="text-lg text-slate-400 font-normal">/lifetime</span>
               </div>
               
-              {/* --- NEW ECOSYSTEM BUNDLE DETAILS --- */}
+              {/* --- ECOSYSTEM BUNDLE DETAILS --- */}
               <div className="mt-2 mb-8 flex-1">
                 <h4 className="text-xs font-extrabold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2 mb-4">
                   Ecosystem Bundle Includes:
@@ -230,7 +287,7 @@ export default function ProDashboard() {
                         I. Core Commentary Volume
                       </h5>
                       <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                        <span className="font-bold">Islamic Inheritance Made Easy:</span> The Islamic Estate Blueprint — A Layman’s Guide to Wills, Debts and Divine Shares (PDF & EPUB Mobile Edition)
+                        <span className="font-bold text-slate-900">Islamic Inheritance Made Easy:</span> The Islamic Estate Blueprint — A Layman’s Guide to Wills, Debts and Divine Shares (PDF & EPUB Mobile Edition)
                       </p>
                     </div>
                   </div>
