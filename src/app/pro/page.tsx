@@ -4,26 +4,41 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LandingPage() {
+export default function ProLandingPage() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { openSignUp } = useClerk();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleCheckout = async (planType: string) => {
-    // If not signed in, force sign-up/sign-in first
-    if (!isSignedIn) {
-      openSignUp({ afterSignUpUrl: "/dashboard", afterSignInUrl: "/dashboard" });
+    // If not signed in, force sign-up/sign-in first using Clerk v5+ syntax
+    if (!isSignedIn || !user) {
+      openSignUp({ 
+        fallbackRedirectUrl: "/pro", 
+        forceRedirectUrl: "/pro" 
+      });
       return;
     }
 
     setIsLoading(planType); 
     try {
+      // Grab the user's email directly from the Clerk frontend object
+      const email = user.primaryEmailAddress?.emailAddress;
+
       const res = await fetch("/api/pay", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planType }) 
+        // Pass BOTH the plan and the email to the backend
+        body: JSON.stringify({ plan: planType, email: email }) 
       });
+
+      // Catch backend errors before trying to parse JSON
+      if (!res.ok) {
+        alert("Server error. Please try again.");
+        setIsLoading(null);
+        return;
+      }
+
       const data = await res.json();
       
       if (data.url) {
@@ -32,7 +47,8 @@ export default function LandingPage() {
         alert("Payment gateway error. Please try again.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Checkout Error:", error);
+      alert("Something went wrong connecting to the payment gateway.");
     } finally {
       setIsLoading(null);
     }
@@ -72,13 +88,15 @@ export default function LandingPage() {
               <strong>🛡️ Android Warning:</strong> Your phone may flag this as an "Unknown Source". Tap <strong>Settings</strong> and <strong>"Allow from this source"</strong> to install safely.
             </div>
 
-            <button 
-              onClick={() => handleCheckout('mobile')}
-              disabled={isLoading !== null}
-              className="w-full py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all disabled:opacity-50 mt-auto"
+            {/* DIRECT DOWNLOAD LINK FOR MOBILE - NO PAYSTACK REQUIRED HERE */}
+            <a 
+              href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full block text-center py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all mt-auto"
             >
-               {isLoading === 'mobile' ? "Connecting..." : "Get Mobile App"}
-            </button>
+              Download Android App
+            </a>
           </div>
 
           {/* TIER 2: MASTER BUNDLE */}
@@ -204,6 +222,10 @@ export default function LandingPage() {
             <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
             <li>We will verify your purchase and send you your unique Activation Key!</li>
           </ol>
+
+          <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg text-sm text-blue-900">
+            <strong>🛡️ Note on Windows Security:</strong> Because this is an independently published software, Microsoft Defender may show a blue <em>"Windows protected your PC"</em> screen when you open the installer. This is completely normal. Simply click <strong>"More info"</strong> and then <strong>"Run anyway"</strong> to proceed.
+          </div>
         </div>
 
       </div>
