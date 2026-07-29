@@ -207,24 +207,24 @@ export default function ProLandingPage() {
 
         </div>
 
-        {/* --- DESKTOP ACTIVATION NOTICE --- */}
+        {/* --- SOFTWARE ACTIVATION NOTICE --- */}
         <div className="mt-12 p-6 bg-slate-50 border border-slate-200 rounded-2xl text-left max-w-3xl mx-auto shadow-sm">
           <h3 className="text-lg font-bold text-slate-800 mb-2">
-            🖥️ Important: How Desktop Activation Works (Tier 2 & 3)
+            🖥️ 📱 Important: How Software Activation Works
           </h3>
           <p className="text-sm text-slate-600 mb-4">
-            Your desktop software is secured with hardware-locked licensing. To unlock your copy <strong>after payment</strong>, follow these steps:
+            Both your <strong>Desktop PC</strong> and <strong>Mobile Android</strong> applications are secured with hardware-locked licensing. To fully unlock your software <strong>after payment</strong>, follow these steps:
           </p>
           <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700 font-medium mb-4">
-            <li>Download the software from your Unlocked Vault.</li>
-            <li>Install and open the application on your Windows PC.</li>
-            <li>Copy the <strong>Machine ID</strong> displayed on the startup screen.</li>
-            <li>Email your Machine ID to <strong>drmahmud2@gmail.com</strong>.</li>
+            <li>Download your software from the Unlocked Vault.</li>
+            <li>Install and open the application on your device.</li>
+            <li>Copy the unique <strong>Machine ID / Device ID</strong> displayed on the startup screen.</li>
+            <li>Email your ID to <strong>drmahmud2@gmail.com</strong> along with the email address you used to pay.</li>
             <li>We will verify your purchase and send you your unique Activation Key!</li>
           </ol>
 
           <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg text-sm text-blue-900">
-            <strong>🛡️ Note on Windows Security:</strong> Because this is an independently published software, Microsoft Defender may show a blue <em>"Windows protected your PC"</em> screen when you open the installer. This is completely normal. Simply click <strong>"More info"</strong> and then <strong>"Run anyway"</strong> to proceed.
+            <strong>🛡️ Installation Security Note:</strong> Because this is an independently published professional tool, your device may show a security warning. For Windows, click <em>"More info"</em> then <em>"Run anyway"</em>. For Android, allow installation from <em>"Unknown Sources"</em> in your settings.
           </div>
         </div>
 
