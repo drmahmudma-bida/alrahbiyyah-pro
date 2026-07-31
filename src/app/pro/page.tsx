@@ -1,57 +1,26 @@
 "use client";
 
-import { useUser, useClerk } from "@clerk/nextjs";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
 export default function ProLandingPage() {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const { openSignUp } = useClerk();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState<string | null>(null);
+  // 👇 REPLACE THIS WITH YOUR ACTUAL WHATSAPP NUMBER (e.g., 2348012345678)
+  const WHATSAPP_NUMBER = "2348110350355"; 
 
-  const handleCheckout = async (planType: string) => {
-    // If not signed in, force sign-up/sign-in first using Clerk v5+ syntax
-    if (!isSignedIn || !user) {
-      openSignUp({ 
-        fallbackRedirectUrl: "/pro", 
-        forceRedirectUrl: "/pro" 
-      });
-      return;
+  const handleWhatsApp = (planType: string) => {
+    let message = "";
+
+    if (planType === 'bundle') {
+      message = "Hello Dr. Mahmud, I am interested in unlocking the Fara'id Master Bundle (₦12,000). Please guide me on how to make the payment and receive my files.";
+    } else if (planType === 'desktop') {
+      message = "Hello Dr. Mahmud, I am interested in unlocking the Fara'id Desktop Pro (₦10,000). Please guide me on how to make the payment and receive my files.";
+    } else if (planType === 'mobile') {
+      message = "Hello Dr. Mahmud, I am interested in unlocking the Fara'id Mobile Edition (₦5,000). Please guide me on how to make the payment and receive my app.";
     }
 
-    setIsLoading(planType); 
-    try {
-      // Grab the user's email directly from the Clerk frontend object
-      const email = user.primaryEmailAddress?.emailAddress;
-
-      const res = await fetch("/api/pay", { 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Pass BOTH the plan and the email to the backend
-        body: JSON.stringify({ plan: planType, email: email }) 
-      });
-
-      // Catch backend errors before trying to parse JSON
-      if (!res.ok) {
-        alert("Server error. Please try again.");
-        setIsLoading(null);
-        return;
-      }
-
-      const data = await res.json();
-      
-      if (data.url) {
-        window.location.href = data.url; 
-      } else {
-        alert("Payment gateway error. Please try again.");
-      }
-    } catch (error) {
-      console.error("Checkout Error:", error);
-      alert("Something went wrong connecting to the payment gateway.");
-    } finally {
-      setIsLoading(null);
-    }
+    // Encode the message so it formats correctly in the web URL
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    
+    // Open WhatsApp in a new tab/window
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -88,15 +57,13 @@ export default function ProLandingPage() {
               <strong>🛡️ Android Warning:</strong> Your phone may flag this as an "Unknown Source". Tap <strong>Settings</strong> and <strong>"Allow from this source"</strong> to install safely.
             </div>
 
-            {/* DIRECT DOWNLOAD LINK FOR MOBILE - NO PAYSTACK REQUIRED HERE */}
-            <a 
-              href="https://drive.google.com/file/d/1H5tRiprKkVWAi6U6fbCLiDkqRGS9Qaml/view?usp=sharing" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full block text-center py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all mt-auto"
+            {/* DIRECT WHATSAPP LINK FOR MOBILE */}
+            <button 
+              onClick={() => handleWhatsApp('mobile')}
+              className="w-full py-4 rounded-xl font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-all mt-auto"
             >
-              Download Android App
-            </a>
+              Get Mobile App via WhatsApp
+            </button>
           </div>
 
           {/* TIER 2: MASTER BUNDLE */}
@@ -107,7 +74,7 @@ export default function ProLandingPage() {
             <h3 className="text-xl font-bold text-white mb-2">The Master Bundle</h3>
             <p className="text-emerald-200 text-sm mb-6">The ultimate toolkit for serious practitioners.</p>
             <div className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-6">
-              ₦17,500 <span className="text-lg text-emerald-400 font-normal">/lifetime</span>
+              ₦12,000 <span className="text-lg text-emerald-400 font-normal">/lifetime</span>
             </div>
             
             <div className="mt-2 mb-8 flex-1">
@@ -149,11 +116,10 @@ export default function ProLandingPage() {
             </div>
 
             <button 
-              onClick={() => handleCheckout('bundle')}
-              disabled={isLoading !== null}
-              className="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg transition-all disabled:opacity-50 mt-auto"
+              onClick={() => handleWhatsApp('bundle')}
+              className="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 shadow-lg transition-all mt-auto"
             >
-              {isLoading === 'bundle' ? "Connecting..." : "Get the Ultimate Bundle"}
+              Get the Ultimate Bundle via WhatsApp
             </button>
           </div>
 
@@ -162,7 +128,7 @@ export default function ProLandingPage() {
             <h3 className="text-xl font-bold text-slate-800 mb-2">Desktop Pro</h3>
             <p className="text-slate-500 text-sm mb-6">For detailed office drafting & printing.</p>
             <div className="text-4xl font-extrabold text-slate-900 mb-6">
-              ₦15,000 <span className="text-lg text-slate-400 font-normal">/lifetime</span>
+              ₦10,000 <span className="text-lg text-slate-400 font-normal">/lifetime</span>
             </div>
             
             <div className="mt-2 mb-8 flex-1">
@@ -197,11 +163,10 @@ export default function ProLandingPage() {
             </div>
 
             <button 
-              onClick={() => handleCheckout('desktop')}
-              disabled={isLoading !== null}
-              className="w-full py-4 rounded-xl font-bold text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all disabled:opacity-50 mt-auto"
+              onClick={() => handleWhatsApp('desktop')}
+              className="w-full py-4 rounded-xl font-bold text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 transition-all mt-auto"
             >
-               {isLoading === 'desktop' ? "Connecting..." : "Unlock Desktop Vault"}
+               Unlock Desktop Vault via WhatsApp
             </button>
           </div>
 
@@ -216,11 +181,11 @@ export default function ProLandingPage() {
             Both your <strong>Desktop PC</strong> and <strong>Mobile Android</strong> applications are secured with hardware-locked licensing. To fully unlock your software <strong>after payment</strong>, follow these steps:
           </p>
           <ol className="list-decimal list-inside space-y-1 text-sm text-slate-700 font-medium mb-4">
-            <li>Download your software from the Unlocked Vault.</li>
+            <li>Download your software files provided after purchase.</li>
             <li>Install and open the application on your device.</li>
             <li>Copy the unique <strong>Machine ID / Device ID</strong> displayed on the startup screen.</li>
-            <li>Email your ID to <strong>drmahmud2@gmail.com</strong> along with the email address you used to pay.</li>
-            <li>We will verify your purchase and send you your unique Activation Key!</li>
+            <li>Send your ID via WhatsApp or email it to <strong>drmahmud2@gmail.com</strong>.</li>
+            <li>I will verify your purchase and send you your unique Activation Key!</li>
           </ol>
 
           <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg text-sm text-blue-900">
